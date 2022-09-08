@@ -1,4 +1,4 @@
-from telegram_bot import start_telegram_bot
+from bot import start_telegram_bot
 
 
 if __name__ == '__main__':
