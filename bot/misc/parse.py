@@ -1,34 +1,39 @@
 import requests as r
-
 from bs4 import BeautifulSoup
-from loguru import logger
+
+link = 'https://afisha.yandex.ru/vladimir/selections/all-events-concert'
 
 
-def get_test_page():
-    site = 'https://www.vladimirkoncert.ru/shows'
-    concert_info = parse_page(r.get(site).text)
-    logger.info('Page received successfully')
-    return formate_list(concert_info)
+def get_concert_list() -> str:
+    return __formate_info(__parse_page(__get_request(link)))
 
 
-def parse_page(page: str):
-    result = []
+def __get_request(site: str) -> str:
+    return r.get(site).text
+
+
+def __parse_page(page: str) -> list:
     soup = BeautifulSoup(page, 'lxml')
-    concerts = soup.find_all('div', {'class': 'show-descr'})
+    concerts = soup.find_all('div', {'class': 'Inner-sc-5s87mw-1 fXrHG'})
+
+    if not concerts:
+        return []
+
+    result = []
     for concert in concerts:
-        performer = concert.find('div').text
-        date = concert.find('h5').text
+        name = concert.find('h2', attrs={'class': 'Title-sc-5meihc-3 eOlfER'}).text
+        date = concert.find('li', attrs={'class': 'DetailsItem-sc-5meihc-1 gzFGVO'}).text
+        price = concert.find('span', attrs={'class': 'PriceBlock-bp958r-11 cNqIOh'}).text
+        pos = date.find(',')
         result.append({
-            'performer': performer,
-            'date': date
+            'name': name,
+            'date': date[:pos],
+            'price': price
         })
+
     return result
 
 
-def formate_list(concert_list: list):
-    string = ''
-    for count, item in enumerate(concert_list):
-        string += f'{count}. {item["performer"]} {item["date"]}\n'
-        if count > 50:
-            break
-    return string
+def __formate_info(concert_list: list) -> str:
+    return '\n'.join([f'{count + 1}. {item["name"]} {item["date"]} {item["price"]}'
+                      for count, item in enumerate(concert_list)])
