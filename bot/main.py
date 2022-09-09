@@ -3,10 +3,12 @@ from loguru import logger
 from aiogram import Bot, Dispatcher, executor
 from bot.handlers import register_user_handlers
 from bot.misc import EnvKeys
+from bot.database.models import register_models
 
 
 async def __on_start_up(dp: Dispatcher):
     logger.info('Bot starts')
+    register_models()
     register_user_handlers(dp)
 
 

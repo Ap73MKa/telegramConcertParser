@@ -1,39 +1,34 @@
-import requests as r
-from bs4 import BeautifulSoup
+import httpx
 
-link = 'https://afisha.yandex.ru/vladimir/selections/all-events-concert'
+from loguru import logger
+from bs4 import BeautifulSoup
+from bot.database.methods.create import create_concert
+from bot.database.methods.get import get_all_concerts
+from bot.misc.date import reformat_date
 
 
 def get_concert_list() -> str:
-    return __formate_info(__parse_page(__get_request(link)))
+    concert_list = get_all_concerts()
+    concert_list.reverse()
+    return '\n'.join([f'{concert.date} <b>{concert.name}</b> <i>от {concert.price}₽</i>'
+                      for concert in concert_list])
 
 
-def __get_request(site: str) -> str:
-    return r.get(site).text
-
-
-def __parse_page(page: str) -> list:
+def parse_page(link: str):
+    page = httpx.get(link).text
     soup = BeautifulSoup(page, 'lxml')
     concerts = soup.find_all('div', {'class': 'Inner-sc-5s87mw-1 fXrHG'})
 
     if not concerts:
-        return []
+        logger.error('Parsing error')
+        return
 
-    result = []
     for concert in concerts:
         name = concert.find('h2', attrs={'class': 'Title-sc-5meihc-3 eOlfER'}).text
         date = concert.find('li', attrs={'class': 'DetailsItem-sc-5meihc-1 gzFGVO'}).text
         price = concert.find('span', attrs={'class': 'PriceBlock-bp958r-11 cNqIOh'}).text
+        price = int(''.join(filter(str.isdigit, price)))
         pos = date.find(',')
-        result.append({
-            'name': name,
-            'date': date[:pos],
-            'price': price
-        })
+        create_concert(name, reformat_date(date[:pos]), price)
 
-    return result
-
-
-def __formate_info(concert_list: list) -> str:
-    return '\n'.join([f'{count + 1}. {item["name"]} {item["date"]} {item["price"]}'
-                      for count, item in enumerate(concert_list)])
+    logger.info('Page successfully parsed')
