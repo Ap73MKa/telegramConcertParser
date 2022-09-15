@@ -1,7 +1,7 @@
 from datetime import date
 
 
-def reformat_date(start_day: str):
+def reformat_date(start_day: str) -> date:
     months = ('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
               'августа', 'сентября', 'октября', 'ноября', 'декабря')
     day, mon = start_day.split()

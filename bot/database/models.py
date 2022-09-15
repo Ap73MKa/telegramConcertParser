@@ -10,5 +10,5 @@ class Concert(Database.BASE):
     price = Column(Integer)
 
 
-def register_models():
+def register_models() -> None:
     Database.BASE.metadata.create_all(Database().engine)

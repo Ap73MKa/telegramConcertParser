@@ -1,5 +1,5 @@
-from bot.database.main import Database
-from bot.database.methods.get import get_concert_by_id
+from ..main import Database
+from .get import get_concert_by_id
 
 
 def delete_concert_by_id(concert_id: int) -> None:

@@ -1,23 +1,22 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from bot.misc import get_concert_list, update_database
+from bot.misc import get_concert_list, update_database, EnvKeys
 from bot.keyboards.keyboard import get_main_keyboard
-from bot.misc import EnvKeys
 
 
-async def __update_db(msg: Message):
+async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
     update_database(EnvKeys.LINK)
     await bot.send_message(msg.from_user.id, f'Информация обновлена')
 
 
-async def __concerts(msg: Message):
+async def __concerts(msg: Message) -> None:
     bot: Bot = msg.bot
     await bot.send_message(msg.from_user.id, f'Список концертов во Владимире:\n\n'
                                              f'{get_concert_list()}')
 
 
-async def __start(msg: Message):
+async def __start(msg: Message) -> None:
     bot: Bot = msg.bot
     await bot.send_message(msg.from_user.id, text='Начнем парсинг',
                            reply_markup=get_main_keyboard())

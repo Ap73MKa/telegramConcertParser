@@ -4,7 +4,7 @@ from loguru import logger
 from bs4 import BeautifulSoup
 from bot.database.methods.create import create_concert
 from bot.database.methods.get import get_all_concerts
-from bot.misc.date import reformat_date
+from .date import reformat_date
 
 
 def get_concert_list() -> str:
