@@ -6,6 +6,7 @@ from bot.database.methods.create import create_concert
 from bot.database.methods.get import get_all_concerts
 from user_agent import generate_user_agent
 from .date import reformat_date
+from fp.fp import FreeProxy
 
 
 def get_concert_list() -> str:
@@ -16,28 +17,28 @@ def get_concert_list() -> str:
 
 def update_database() -> None:
     url = 'https://afisha.yandex.ru/vladimir/selections/all-events-concert'
-    __parse_info(__gather_info_blocks(__get_http(url)))
+    __gather_info(__get_http(url))
 
 
 def __get_http(url: str) -> str:
-    header = {'User-Agent': generate_user_agent(device_type="desktop", os=('mac', 'linux')),
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
     try:
-        page_response = httpx.get(url, timeout=15, headers=header, follow_redirects=True)
-        logger.info(f'Status code: {page_response.status_code}')
+        header = {'User-Agent': generate_user_agent(device_type="desktop", os=('mac', 'linux')),
+                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+        proxy = {'http://': FreeProxy(rand=True).get()}
+        logger.info(f'Proxy is founded: {proxy["http://"][7:]}')
+        with httpx.Client(headers=header, proxies=proxy, follow_redirects=True) as client:
+            page_response = client.get(url, timeout=5)
+        logger.info(f'Page status: {page_response.status_code}')
         return page_response.text
-    except httpx.Timeout as e:
-        logger.info("It is time to timeout")
+    except Exception as e:
         logger.error(str(e))
         return ''
 
 
-def __gather_info_blocks(site: str) -> list[BeautifulSoup]:
+def __gather_info(site: str) -> None:
     soup = BeautifulSoup(site, 'lxml')
-    return soup.find_all('div', {'class': 'Inner-sc-5s87mw-1 fXrHG'})
+    info_blocks = soup.find_all('div', {'class': 'Inner-sc-5s87mw-1 fXrHG'})
 
-
-def __parse_info(info_blocks: list[BeautifulSoup]) -> None:
     if not info_blocks:
         logger.error('Parsing error')
         return
@@ -49,5 +50,3 @@ def __parse_info(info_blocks: list[BeautifulSoup]) -> None:
         price = int(''.join(filter(str.isdigit, price)))
         pos = date.find(',')
         create_concert(name, reformat_date(date[:pos]), price)
-
-    logger.info('Page successfully parsed')
