@@ -4,6 +4,7 @@ from loguru import logger
 from bs4 import BeautifulSoup
 from bot.database.methods.create import create_concert
 from bot.database.methods.get import get_all_concerts
+from user_agent import generate_user_agent
 from .date import reformat_date
 
 
@@ -13,12 +14,26 @@ def get_concert_list() -> str:
                       for concert in concert_list])
 
 
-def update_database(link: str) -> None:
-    __parse_info(__gather_info_blocks(link))
+def update_database() -> None:
+    url = 'https://afisha.yandex.ru/vladimir/selections/all-events-concert'
+    __parse_info(__gather_info_blocks(__get_http(url)))
 
 
-def __gather_info_blocks(link: str) -> list[BeautifulSoup]:
-    soup = BeautifulSoup(httpx.get(link).text, 'lxml')
+def __get_http(url: str) -> str:
+    header = {'User-Agent': generate_user_agent(device_type="desktop", os=('mac', 'linux')),
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+    try:
+        page_response = httpx.get(url, timeout=15, headers=header, follow_redirects=True)
+        logger.info(f'Status code: {page_response.status_code}')
+        return page_response.text
+    except httpx.Timeout as e:
+        logger.info("It is time to timeout")
+        logger.error(str(e))
+        return ''
+
+
+def __gather_info_blocks(site: str) -> list[BeautifulSoup]:
+    soup = BeautifulSoup(site, 'lxml')
     return soup.find_all('div', {'class': 'Inner-sc-5s87mw-1 fXrHG'})
 
 

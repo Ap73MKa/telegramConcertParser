@@ -1,12 +1,12 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from bot.misc import get_concert_list, update_database, EnvKeys
+from bot.misc import get_concert_list, update_database
 from bot.keyboards.keyboard import get_main_keyboard
 
 
 async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
-    update_database(EnvKeys.LINK)
+    update_database()
     await bot.send_message(msg.from_user.id, f'Информация обновлена')
 
 
