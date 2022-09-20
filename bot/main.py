@@ -3,12 +3,14 @@ from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bot.handlers import register_user_handlers
 from bot.database.models import register_models
+from bot.misc.parse import register_network
 from bot.misc import EnvKeys
 
 
 async def __on_start_up(dp: Dispatcher):
     logger.info('Bot starts')
     register_models()
+    register_network()
     register_user_handlers(dp)
 
 

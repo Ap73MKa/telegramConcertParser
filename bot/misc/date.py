@@ -2,13 +2,8 @@ from datetime import date
 
 
 def reformat_date(start_day: str) -> date:
-    months = ('января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
-              'августа', 'сентября', 'октября', 'ноября', 'декабря')
-
-    for index, char in enumerate(start_day):
-        if char.isdigit():
-            start_day = start_day[index:]
-            break
+    months = ('Янв', 'Февр', 'Март', 'Апр.', 'Мая', 'Июня',
+              'Июля', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек')
 
     day, mon = start_day.split()
     mon = months.index(mon) + 1
