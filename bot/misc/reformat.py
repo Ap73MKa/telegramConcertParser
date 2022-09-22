@@ -13,3 +13,9 @@ def reformat_date(start_day: str) -> date:
         year += 1
 
     return date(year, mon, int(day))
+
+
+def reformat_price(price: str) -> int:
+    pos = price.find('—')
+    price = price[:pos] if pos != 0 else price
+    return int(''.join(filter(str.isdigit, price)))

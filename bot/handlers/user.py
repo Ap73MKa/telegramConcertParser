@@ -7,7 +7,7 @@ from bot.keyboards.keyboard import get_main_keyboard
 async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
     update_database()
-    await bot.send_message(msg.from_user.id, f'Информация обновлена')
+    await bot.send_message(msg.from_user.id, 'Информация обновлена')
 
 
 async def __concerts(msg: Message) -> None:

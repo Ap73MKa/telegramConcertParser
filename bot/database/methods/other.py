@@ -1,7 +1,7 @@
+from datetime import date
 from ..main import Database
 from .get import get_all_concerts
 from .delete import delete_concert_by_id
-from datetime import date
 
 
 def clean_outdated_concerts() -> None:

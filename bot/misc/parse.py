@@ -1,18 +1,17 @@
-import httpx
-
 from typing import NamedTuple
 from loguru import logger
 from bs4 import BeautifulSoup
+from httpx import Client, HTTPError
 from proxyscrape import create_collector, get_collector
-from bot.database.methods.create import create_concert
-from bot.database.methods.get import get_all_concerts
-from .date import reformat_date
+from ..database.methods.create import create_concert
+from ..database.methods.get import get_all_concerts
+from .reformat import reformat_date, reformat_price
 
 
 class CategoryId(NamedTuple):
     HUMOR = 4073
     HIP_HOP = 3007
-    ELECTRO = 3008
+    ELECTRONIC = 3008
     ROCK = 3002
     POP = 3003
 
@@ -33,7 +32,7 @@ def update_database() -> None:
     params = {
         'category[]': [
             CategoryId.HUMOR,
-            CategoryId.ELECTRO,
+            CategoryId.ELECTRONIC,
             CategoryId.HIP_HOP,
             CategoryId.ROCK,
             CategoryId.POP
@@ -46,29 +45,24 @@ def update_database() -> None:
 
 def __generate_proxy() -> str:
     proxy = get_collector('my-collector').get_proxy()
-    ip = f'{proxy.host}:{proxy.port}'
-    logger.info(f'IP: {ip}')
-    return ip
+    logger.info(f'IP: {proxy.host}:{proxy.port}')
+    return f'{proxy.host}:{proxy.port}'
 
 
 def __get_http(url: str, params=None) -> str:
-
     if params is None:
         params = {}
-
     try:
         header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
                   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
-
         proxy = {'http://': f'http://{__generate_proxy()}'}
-
-        with httpx.Client(headers=header, proxies=proxy, follow_redirects=True) as client:
+        with Client(headers=header, proxies=proxy, follow_redirects=True) as client:
             page_response = client.get(url, timeout=5, params=params)
         logger.info(f'Page status: {page_response.status_code}')
         return page_response.text
 
-    except Exception as e:
-        logger.error(str(e))
+    except HTTPError as exc:
+        logger.error(str(exc))
         return ''
 
 
@@ -82,15 +76,6 @@ def __parse_kassir(site: str) -> None:
 
     for block in info_blocks:
         name = block.find('div', attrs={'class': 'title'}).text.strip()
-
         date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
-        pos = date.find('.')
-        print(date[:pos])
-        date = reformat_date(date[:pos])
-
         price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
-        pos = price.find('—')
-        price = price[:pos] if pos != 0 else price
-        price = int(''.join(filter(str.isdigit, price)))
-
-        create_concert(name, date, price)
+        create_concert(name, reformat_date(date[:date.find('.')]), reformat_price(price))

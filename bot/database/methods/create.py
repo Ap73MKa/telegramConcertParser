@@ -1,7 +1,7 @@
+from datetime import date
 from sqlalchemy import exc
 from ..main import Database
 from ..models import Concert
-from datetime import date
 
 
 def create_concert(name: str, start_date: date, price: int) -> None:
