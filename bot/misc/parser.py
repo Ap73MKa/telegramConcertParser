@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 from httpx import Client, HTTPError
 from proxyscrape import create_collector
 from ..database.methods.create import create_concert
-from .reformat import reformat_date, reformat_price
-from .singleton import SingletonMeta
+from .reformat import reformat_date, reformat_price, get_cities
 from .config import Config
 
 
@@ -17,9 +16,9 @@ class CategoryId(NamedTuple):
     POP = 3003
 
 
-class Requester(metaclass=SingletonMeta):
-    def __init__(self):
-        self.proxies = create_collector('my-collector', 'http')
+class Requester:
+
+    proxies = create_collector('my-collector', 'http')
 
     def generate_proxy(self) -> str:
         proxy = self.proxies.get_proxy()
@@ -54,7 +53,7 @@ class Kassir:
         }
 
     @staticmethod
-    def parse(site: str) -> None:
+    def parse(site: str, city: str) -> None:
         soup = BeautifulSoup(site, 'lxml')
         info_blocks = soup.find_all('div', {'class': 'event-card__caption'})
 
@@ -66,8 +65,12 @@ class Kassir:
             name = block.find('div', attrs={'class': 'title'}).text.strip()
             date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
             price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
-            create_concert(name, reformat_date(date), reformat_price(price))
+            create_concert(name, reformat_date(date), reformat_price(price), city)
 
 
 def update_database() -> None:
-    Kassir().parse(Requester().get_http(Kassir().url, Kassir().params))
+    logger.info('Start parsing')
+    for city in get_cities().keys():
+        url = f'https://{city}.{Kassir().url}'
+        Kassir().parse(Requester().get_http(url, Kassir().params), city)
+    logger.info('Parsing completed')

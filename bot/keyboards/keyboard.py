@@ -1,4 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from bot.misc.reformat import get_cities
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
@@ -12,8 +13,6 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
 
 def get_city_keyboard() -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(row_width=1)
-    kb.add(
-        InlineKeyboardButton(text='test1', callback_data='test1'),
-        InlineKeyboardButton(text='test2', callback_data='test2')
-    )
+    for abb, city in get_cities().items():
+        kb.add(InlineKeyboardButton(text=city, callback_data=f'city-{abb}'))
     return kb

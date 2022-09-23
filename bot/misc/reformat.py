@@ -15,3 +15,14 @@ def reformat_price(price: str) -> int:
     pos = price.find('—')
     price = price[:pos] if pos != 0 else price
     return int(''.join(filter(str.isdigit, price)))
+
+
+def get_cities():
+    return {
+        'msk': 'Москва',
+        'spb': 'Санкт-Петербург',
+        'nn': 'Нижний Новгород',
+        'rnd': 'Ростов-на-Дону',
+        'kzn': 'Казань',
+        'vlm': 'Владимир'
+    }
