@@ -8,7 +8,7 @@ from bot.misc.reformat import get_cities
 
 async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
-    update_database()
+    await update_database()
     await bot.send_message(msg.from_user.id, 'Информация обновлена')
 
 

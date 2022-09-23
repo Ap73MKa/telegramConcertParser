@@ -1,2 +1,2 @@
 from .config import Config
-from .parser import Requester, update_database
+from .parser import update_database
