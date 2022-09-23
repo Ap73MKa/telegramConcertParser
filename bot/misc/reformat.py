@@ -1,18 +1,14 @@
 from datetime import date
 
 
-def reformat_date(start_day: str) -> date:
-    months = ('Янв', 'Февр', 'Март', 'Апр.', 'Мая', 'Июня',
-              'Июля', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек')
-
-    day, mon = start_day.split()
-    mon = months.index(mon) + 1
+def reformat_date(concert_date: str) -> date:
+    months = ('Янв.', 'Февр.', 'Март', 'Апр.', 'Май', 'Июнь',
+              'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.')
+    concert_date = concert_date.split()
+    mon = months.index(concert_date[1]) + 1
     year = date.today().year
-
-    if mon < date.today().month:
-        year += 1
-
-    return date(year, mon, int(day))
+    year += 1 if mon < date.today().month else 0
+    return date(year, mon, int(concert_date[0]))
 
 
 def reformat_price(price: str) -> int:
