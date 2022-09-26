@@ -1,14 +1,17 @@
-from datetime import date
+from locale import setlocale, LC_ALL
+from datetime import date, datetime
+from loguru import logger
+
+
+def set_language() -> None:
+    setlocale(category=LC_ALL, locale="Russian")
+    logger.info('Language changed to Russian')
 
 
 def reformat_date(concert_date: str) -> date:
-    months = ('Янв.', 'Февр.', 'Март', 'Апр.', 'Май', 'Июнь',
-              'Июль', 'Авг.', 'Сент.', 'Окт.', 'Нояб.', 'Дек.')
-    concert_date = concert_date.split()
-    mon = months.index(concert_date[1]) + 1
-    year = date.today().year
-    year += 1 if mon < date.today().month else 0
-    return date(year, mon, int(concert_date[0]))
+    concert_date = datetime.strptime(concert_date[:6].lower(), '%d %b').date()
+    year = date.today().year + 1 if concert_date.month < date.today().month else date.today().year
+    return concert_date.replace(year=year)
 
 
 def reformat_price(price: str) -> int:

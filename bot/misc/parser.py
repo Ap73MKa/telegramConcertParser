@@ -39,7 +39,6 @@ class Kassir:
     @staticmethod
     async def parse(site: str, city: str) -> None:
         soup = BeautifulSoup(site, 'lxml')
-
         # info_blocks = soup.find_all('div', {'class': 'event-card__caption'})
         info_blocks = soup.find_all('div', {'class': 'event-card js-ec-impression'})
 
@@ -75,7 +74,7 @@ async def update_database() -> None:
     logger.info('Start parsing')
     task = []
     proxy = Proxy().generate_proxy()
-    for city in get_cities().keys():
+    for city in get_cities():
         url = f'https://{city}.{Kassir().url}'
         page = await get_http(url, proxy, Kassir().params)
         task.append(Kassir().parse(page, city))

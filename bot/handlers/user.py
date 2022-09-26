@@ -4,6 +4,7 @@ from aiogram.types import Message, CallbackQuery
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
 from bot.database.methods.get import get_concerts_by_city
 from bot.misc.reformat import get_cities
+from bot.misc.config import Config
 
 
 async def __update_db(msg: Message) -> None:
@@ -25,11 +26,13 @@ async def __concerts(msg: Message) -> None:
 
 async def __city_concert(query: CallbackQuery):
     bot: Bot = query.bot
-    concert_list = get_concerts_by_city(query.data[5:])
-    concert_list = '\n'.join([f"{concert.date} <b><i>от {concert.price}₽</i>\n<a href='{concert.url}'>{concert.name}</a></b>\n"
-                              for concert in concert_list])
-    city_name = get_cities()[query.data[5:]]
-    await bot.send_message(query.from_user.id, f'{city_name}. Список концертов\n\n\n{concert_list}')
+    city_abb = query.data[5:]
+    city_name = get_cities()[city_abb]
+    concert_list = get_concerts_by_city(city_abb)
+    concert_list = '\n'.join([f"{concert.date.strftime('%d %b, %a %Y')} <i>от {concert.price} ₽</i>\n"
+                              f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
+    await bot.send_message(query.from_user.id, f'<a href="https://{city_abb}.{Config.URL}">{city_name.upper()}</a>.'
+                                               f' Список концертов\n\n\n{concert_list}')
 
 
 def register_user_handlers(dp: Dispatcher) -> None:

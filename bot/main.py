@@ -5,12 +5,14 @@ from bot.handlers import register_user_handlers
 from bot.database.models import register_models
 from bot.misc import Config
 from bot.misc.schedule import start_schedule
+from bot.misc.reformat import set_language
 
 
 async def __on_start_up(dp: Dispatcher):
     logger.info('Bot starts')
     register_models()
     register_user_handlers(dp)
+    set_language()
     start_schedule()
 
 
