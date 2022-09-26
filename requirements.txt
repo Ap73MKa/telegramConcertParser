@@ -1,9 +1,9 @@
 aiogram~=2.22.1
 loguru~=0.6.0
 SQLAlchemy~=1.4.41
-asyncscheduler~=0.2.0
 bs4~=0.0.1
 httpx~=0.23.0
 lxml~=4.9.1
 beautifulsoup4~=4.11.1
 proxyscrape~=0.3.0
+APScheduler~=3.9.1

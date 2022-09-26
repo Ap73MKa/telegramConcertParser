@@ -26,25 +26,6 @@ class Proxy:
         return f'{proxy.host}:{proxy.port}'
 
 
-class Request:
-
-    @staticmethod
-    async def get_http(url: str, proxy: dict, params=None, ) -> str:
-        if params is None:
-            params = {}
-        try:
-            header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
-                      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
-            async with AsyncClient(headers=header, proxies=proxy, follow_redirects=True) as client:
-                page_response = await client.get(url, timeout=5, params=params)
-            logger.info(f'Page status: {page_response.status_code} URL: {page_response.url}')
-            return page_response.text
-
-        except HTTPError as exc:
-            logger.error(str(exc))
-            return ''
-
-
 class Kassir:
     def __init__(self):
         self.url: str = Config.URL
@@ -71,13 +52,29 @@ class Kassir:
             create_concert(name, reformat_date(date), reformat_price(price), city)
 
 
-async def update_database():
+async def get_http(url: str, proxy=None, params=None) -> str:
+    params = {} if params is None else params
+    proxy = {} if proxy is None else {'http://': f'http://{proxy}'}
+    try:
+        header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
+                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+        async with AsyncClient(headers=header, proxies=proxy, follow_redirects=True) as client:
+            page_response = await client.get(url, timeout=5, params=params)
+        logger.info(f'Page status: {page_response.status_code} URL: {page_response.url}')
+        return page_response.text
+
+    except HTTPError as exc:
+        logger.error(str(exc))
+        return ''
+
+
+async def update_database() -> None:
     logger.info('Start parsing')
     task = []
-    proxy = {'http://': f'http://{Proxy().generate_proxy()}'}
+    proxy = Proxy().generate_proxy()
     for city in get_cities().keys():
         url = f'https://{city}.{Kassir().url}'
-        page = await Request().get_http(url, proxy, Kassir().params)
+        page = await get_http(url, proxy, Kassir().params)
         task.append(Kassir().parse(page, city))
     await asyncio.gather(*task)
     logger.info('Parse completed')
