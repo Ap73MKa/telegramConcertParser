@@ -25,11 +25,11 @@ async def __concerts(msg: Message) -> None:
 
 async def __city_concert(query: CallbackQuery):
     bot: Bot = query.bot
-    concert_list = reversed(get_concerts_by_city(query.data[5:]))
-    concert_list = '\n'.join([f'{concert.date} <b>{concert.name}</b> <i>от {concert.price}₽</i>'
+    concert_list = get_concerts_by_city(query.data[5:])
+    concert_list = '\n'.join([f"{concert.date} <b><i>от {concert.price}₽</i>\n<a href='{concert.url}'>{concert.name}</a></b>\n"
                               for concert in concert_list])
     city_name = get_cities()[query.data[5:]]
-    await bot.send_message(query.from_user.id, f'{city_name}. Список концертов\n\n{concert_list}')
+    await bot.send_message(query.from_user.id, f'{city_name}. Список концертов\n\n\n{concert_list}')
 
 
 def register_user_handlers(dp: Dispatcher) -> None:
@@ -37,6 +37,8 @@ def register_user_handlers(dp: Dispatcher) -> None:
     dp.register_message_handler(__update_db, content_types=['text'], text='Обновить базу данных ⚙')
     dp.register_message_handler(__concerts, content_types=['text'], text='Узнать концерты 🔥')
     dp.register_message_handler(__start, commands='start')
+    # endregion
 
     # region callback handlers
     dp.register_callback_query_handler(__city_concert, lambda c: c.data and c.data.startswith('city-'))
+    # endregion

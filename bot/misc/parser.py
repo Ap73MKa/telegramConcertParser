@@ -39,7 +39,9 @@ class Kassir:
     @staticmethod
     async def parse(site: str, city: str) -> None:
         soup = BeautifulSoup(site, 'lxml')
-        info_blocks = soup.find_all('div', {'class': 'event-card__caption'})
+
+        # info_blocks = soup.find_all('div', {'class': 'event-card__caption'})
+        info_blocks = soup.find_all('div', {'class': 'event-card js-ec-impression'})
 
         if not info_blocks:
             logger.error('Incorrect input info')
@@ -49,7 +51,8 @@ class Kassir:
             name = block.find('div', attrs={'class': 'title'}).text.strip()
             date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
             price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
-            create_concert(name, reformat_date(date), reformat_price(price), city)
+            url = block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+            create_concert(name, reformat_date(date), reformat_price(price), city, url)
 
 
 async def get_http(url: str, proxy=None, params=None) -> str:

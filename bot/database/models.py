@@ -9,6 +9,7 @@ class Concert(Database.BASE):
     date = Column(Date)
     price = Column(Integer)
     city = Column(Text)
+    url = Column(Text)
 
 
 def register_models() -> None:
