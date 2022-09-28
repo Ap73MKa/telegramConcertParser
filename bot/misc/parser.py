@@ -4,9 +4,9 @@ from loguru import logger
 from bs4 import BeautifulSoup
 from httpx import HTTPError, AsyncClient
 from proxyscrape import create_collector
-from ..database.methods.create import create_concert
-from .reformat import reformat_date, reformat_price, get_cities
-from .config import Config
+from bot.database.methods.create import create_concert
+from bot.misc import Config
+from bot.misc.reformat import reformat_date, reformat_price, get_cities
 
 
 class CategoryId(NamedTuple):

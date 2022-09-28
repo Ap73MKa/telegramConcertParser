@@ -1,10 +1,8 @@
 from aiogram import Bot, Dispatcher
-from bot.misc import update_database
 from aiogram.types import Message, CallbackQuery
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
 from bot.database.methods.get import get_concerts_by_city
-from bot.misc.reformat import get_cities
-from bot.misc.config import Config
+from bot.misc import Config, update_database, get_cities
 
 
 async def __update_db(msg: Message) -> None:
