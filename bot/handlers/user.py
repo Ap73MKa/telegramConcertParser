@@ -13,13 +13,23 @@ async def __update_db(msg: Message) -> None:
 
 async def __start(msg: Message) -> None:
     bot: Bot = msg.bot
-    await bot.send_message(msg.from_user.id, text='Начнем парсинг',
+    await bot.send_message(msg.from_user.id, text=f'Привет, {msg.from_user.full_name}\n'
+                                                  f'Давай узнаем новые концерты',
                            reply_markup=get_main_keyboard())
 
 
 async def __concerts(msg: Message) -> None:
     bot: Bot = msg.bot
     await bot.send_message(msg.from_user.id, text='Выберите город:', reply_markup=get_city_keyboard())
+
+
+async def __info(msg: Message):
+    bot: Bot = msg.bot
+    cities = '\n'.join([f'• {city}' for city in get_cities().values()])
+    await bot.send_message(msg.from_user.id, '<b>tgConcerts</b> - это особый телеграм бот, который собирает '
+                                             'информацию о всех концертах городов России специально для тебя! '
+                                             'Чтобы запустить бота напиши <b>/start</b>\n\n'
+                                             f'На данный момент доступны города:\n{cities}')
 
 
 async def __city_concert(query: CallbackQuery):
@@ -33,11 +43,20 @@ async def __city_concert(query: CallbackQuery):
                                                f' Список концертов\n\n\n{concert_list}')
 
 
+async def __site(msg: Message):
+    bot: Bot = msg.bot
+    await bot.send_message(msg.from_user.id, f'<b><a href="https://kassir.ru">Kassir</a></b> - сайт, на котором '
+                                             f'мы и узнаем все информацию об концертах. Если вам неудобен наш бот, то '
+                                             f'вы всегда можете узнать новую информацию на сайте 🤔')
+
+
 def register_user_handlers(dp: Dispatcher) -> None:
     # region message handlers
     dp.register_message_handler(__update_db, content_types=['text'], text='Обновить базу данных ⚙')
     dp.register_message_handler(__concerts, content_types=['text'], text='Узнать концерты 🔥')
+    dp.register_message_handler(__site, content_types=['text'], text='Узнать сайт 💬')
     dp.register_message_handler(__start, commands='start')
+    dp.register_message_handler(__info)
     # endregion
 
     # region callback handlers

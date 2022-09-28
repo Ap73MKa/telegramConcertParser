@@ -5,8 +5,7 @@ from bs4 import BeautifulSoup
 from httpx import HTTPError, AsyncClient
 from proxyscrape import create_collector
 from bot.database.methods.create import create_concert
-from bot.misc import Config
-from bot.misc.reformat import reformat_date, reformat_price, get_cities
+from bot.misc import Config, reformat_price, reformat_date, get_cities
 
 
 class CategoryId(NamedTuple):

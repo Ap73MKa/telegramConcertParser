@@ -1,12 +1,13 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from bot.misc.reformat import get_cities
+from bot.misc import get_cities
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     kb.add(
         KeyboardButton(text='Узнать концерты 🔥'),
-        KeyboardButton(text='Обновить базу данных ⚙')
+        KeyboardButton(text='Обновить базу данных ⚙'),
+        KeyboardButton(text='Узнать сайт 💬')
     )
     return kb
 
