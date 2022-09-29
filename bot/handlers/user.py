@@ -1,3 +1,4 @@
+import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery
 from loguru import logger
@@ -50,9 +51,9 @@ async def __city_concert(query: CallbackQuery):
 
 async def __site(msg: Message):
     bot: Bot = msg.bot
-    await bot.send_message(msg.from_user.id, f'<b><a href="https://kassir.ru">Kassir</a></b> - сайт, на котором '
-                                             f'мы и узнаем все информацию об концертах. Если вам неудобен наш бот, то '
-                                             f'вы всегда можете узнать новую информацию на сайте 🤔')
+    await bot.send_message(msg.from_user.id, '<b><a href="https://kassir.ru">Kassir</a></b> - сайт, на котором '
+                                             'мы и узнаем все информацию об концертах. Если вам неудобен наш бот, то '
+                                             'вы всегда можете узнать новую информацию на сайте 🤔')
 
 
 def register_user_handlers(dp: Dispatcher) -> None:
