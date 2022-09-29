@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery
+from loguru import logger
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
 from bot.database.methods.get import get_concerts_by_city
 from bot.misc import Config, update_database, get_cities
@@ -7,8 +8,12 @@ from bot.misc import Config, update_database, get_cities
 
 async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
-    await update_database()
-    await bot.send_message(msg.from_user.id, 'Информация обновлена')
+    try:
+        await update_database()
+        await bot.send_message(msg.from_user.id, 'Информация обновлена')
+    except Exception as exp:
+        logger.error(exp)
+        await bot.send_message(msg.from_user.id, 'Ошибка обновления данных')
 
 
 async def __start(msg: Message) -> None:
@@ -37,7 +42,7 @@ async def __city_concert(query: CallbackQuery):
     city_abb = query.data[5:]
     city_name = get_cities()[city_abb]
     concert_list = get_concerts_by_city(city_abb)
-    concert_list = '\n'.join([f"{concert.date.strftime('%d %b, %a %Y')} <i>от {concert.price} ₽</i>\n"
+    concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')} <i>от {concert.price} ₽</i>\n"
                               f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
     await bot.send_message(query.from_user.id, f'<a href="https://{city_abb}.{Config.URL}">{city_name.upper()}</a>.'
                                                f' Список концертов\n\n\n{concert_list}')

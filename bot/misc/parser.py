@@ -1,11 +1,11 @@
-import asyncio
 from typing import NamedTuple
+from asyncio import gather
 from loguru import logger
 from bs4 import BeautifulSoup
-from httpx import HTTPError, AsyncClient
-from proxyscrape import create_collector
+from aiohttp import ClientSession
+from aiohttp.web import HTTPBadRequest
+from bot.misc import Config, get_cities, get_city_from_url, reformat_date, reformat_price
 from bot.database.methods.create import create_concert
-from bot.misc import Config, reformat_price, reformat_date, get_cities
 
 
 class CategoryId(NamedTuple):
@@ -16,66 +16,46 @@ class CategoryId(NamedTuple):
     POP = 3003
 
 
-class Proxy:
-    proxies = create_collector('my-collector', 'http')
+def get_params():
+    return {
+        'category[]': [CategoryId.HUMOR,
+                       CategoryId.ELECTRONIC,
+                       CategoryId.HIP_HOP,
+                       CategoryId.ROCK,
+                       CategoryId.POP],
+        'sort': 0,
+        'c': 30
+    }
 
-    def generate_proxy(self) -> str:
-        proxy = self.proxies.get_proxy()
-        logger.info(f'IP: {proxy.host}:{proxy.port}')
-        return f'{proxy.host}:{proxy.port}'
+
+def get_header() -> dict:
+    return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
 
 
-class Kassir:
-    def __init__(self):
-        self.url: str = Config.URL
-        self.params: dict = {
-            'category[]': [CategoryId.HUMOR, CategoryId.ELECTRONIC, CategoryId.HIP_HOP,
-                           CategoryId.ROCK, CategoryId.POP],
-            'sort': 0,
-            'c': 30
-        }
-
-    @staticmethod
-    async def parse(site: str, city: str) -> None:
-        soup = BeautifulSoup(site, 'lxml')
-        # info_blocks = soup.find_all('div', {'class': 'event-card__caption'})
+async def get_page_data(session: ClientSession, url: str):
+    async with session.get(url, params=get_params()) as response:
+        soup = BeautifulSoup(await response.text(), 'lxml')
         info_blocks = soup.find_all('div', {'class': 'event-card js-ec-impression'})
+        city = get_city_from_url(url)
 
         if not info_blocks:
-            logger.error('Incorrect input info')
-            return
+            logger.error(f'Error url: {city}.{Config.URL}'
+                         f'HTTP status: {response.status}')
+            raise HTTPBadRequest
 
         for block in info_blocks:
             name = block.find('div', attrs={'class': 'title'}).text.strip()
             date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
             price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
-            url = block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
-            create_concert(name, reformat_date(date), reformat_price(price), city, url)
+            link = block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+            create_concert(name, reformat_date(date), reformat_price(price), city, link)
 
-
-async def get_http(url: str, proxy=None, params=None) -> str:
-    params = {} if params is None else params
-    proxy = {} if proxy is None else {'http://': f'http://{proxy}'}
-    try:
-        header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
-                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
-        async with AsyncClient(headers=header, proxies=proxy, follow_redirects=True) as client:
-            page_response = await client.get(url, timeout=5, params=params)
-        logger.info(f'Page status: {page_response.status_code} URL: {page_response.url}')
-        return page_response.text
-
-    except HTTPError as exc:
-        logger.error(str(exc))
-        return ''
+        logger.info(f'Parsed: {city}.{Config.URL}')
 
 
 async def update_database() -> None:
-    logger.info('Start parsing')
-    task = []
-    proxy = Proxy().generate_proxy()
-    for city in get_cities():
-        url = f'https://{city}.{Kassir().url}'
-        page = await get_http(url, proxy, Kassir().params)
-        task.append(Kassir().parse(page, city))
-    await asyncio.gather(*task)
-    logger.info('Parse completed')
+    urls = [f'https://{city}.{Config.URL}' for city in get_cities()]
+    async with ClientSession(headers=get_header()) as session:
+        tasks = [get_page_data(session, url) for url in urls]
+        await gather(*tasks)

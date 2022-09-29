@@ -1,6 +1,7 @@
 from locale import setlocale, LC_ALL
 from datetime import date, datetime
 from loguru import logger
+from urllib.parse import urlparse
 
 
 def set_language() -> None:
@@ -18,6 +19,11 @@ def reformat_price(price: str) -> int:
     pos = price.find('—')
     price = price[:pos] if pos != 0 else price
     return int(''.join(filter(str.isdigit, price)))
+
+
+def get_city_from_url(url: str) -> str:
+    url = urlparse(url).netloc
+    return url[:url.find('.')]
 
 
 def get_cities():
