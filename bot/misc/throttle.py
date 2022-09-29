@@ -31,4 +31,4 @@ class ThrottlingMiddleware(BaseMiddleware):
         except Throttled as throttled:
             if throttled.exceeded_count <= 2:
                 await message.reply('Вы превысили число запросов 😕')
-            raise CancelHandler()
+            raise CancelHandler() from throttled

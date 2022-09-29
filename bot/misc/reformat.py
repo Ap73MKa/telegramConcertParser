@@ -1,7 +1,7 @@
 from locale import setlocale, LC_ALL
 from datetime import date, datetime
-from loguru import logger
 from urllib.parse import urlparse
+from loguru import logger
 
 
 def set_language() -> None:
