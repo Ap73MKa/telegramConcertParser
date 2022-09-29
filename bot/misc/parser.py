@@ -33,29 +33,28 @@ def get_header() -> dict:
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
 
 
+def fetch(info_blocks, city: str) -> None:
+    if not info_blocks:
+        logger.error(f'Error url: {city}.{Config.URL}')
+        raise HTTPBadRequest
+
+    for block in info_blocks:
+        name = block.find('div', attrs={'class': 'title'}).text.strip()
+        date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
+        price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
+        link = block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+        create_concert(name, reformat_date(date), reformat_price(price), city, link)
+
+
 async def get_page_data(session: ClientSession, url: str):
     async with session.get(url, params=get_params()) as response:
         soup = BeautifulSoup(await response.text(), 'lxml')
-        info_blocks = soup.find_all('div', {'class': 'event-card js-ec-impression'})
         city = get_city_from_url(url)
-
-        if not info_blocks:
-            logger.error(f'Error url: {city}.{Config.URL}'
-                         f'HTTP status: {response.status}')
-            raise HTTPBadRequest
-
-        for block in info_blocks:
-            name = block.find('div', attrs={'class': 'title'}).text.strip()
-            date = block.find('time', attrs={'class': 'date date--md'}).text.strip()
-            price = block.find('div', attrs={'class': 'cost rub'}).text.strip()
-            link = block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
-            create_concert(name, reformat_date(date), reformat_price(price), city, link)
-
+        fetch(soup.find_all('div', {'class': 'event-card js-ec-impression'}), city)
         logger.info(f'Parsed: {city}.{Config.URL}')
 
 
 async def update_database() -> None:
     urls = [f'https://{city}.{Config.URL}' for city in get_cities()]
     async with ClientSession(headers=get_header()) as session:
-        tasks = [get_page_data(session, url) for url in urls]
-        await gather(*tasks)
+        await gather(*[get_page_data(session, url) for url in urls])
