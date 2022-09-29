@@ -3,8 +3,9 @@ from asyncio import gather
 from loguru import logger
 from bs4 import BeautifulSoup
 from aiohttp import ClientSession
-from aiohttp.web import HTTPBadRequest
-from bot.misc import Config, get_cities, get_city_from_url, reformat_date, reformat_price
+from aiohttp.web import HTTPException
+from bot.misc.config import Config
+from bot.misc.reformat import get_cities, get_city_from_url, reformat_date, reformat_price
 from bot.database.methods.create import create_concert
 
 
@@ -33,7 +34,7 @@ def get_header() -> dict:
 def fetch(info_blocks: list[BeautifulSoup], city: str) -> None:
     if not info_blocks:
         logger.error(f'Error url: {city}.{Config.URL}')
-        raise HTTPBadRequest
+        raise HTTPException
 
     for block in info_blocks:
         name = block.find('div', attrs={'class': 'title'}).text.strip()

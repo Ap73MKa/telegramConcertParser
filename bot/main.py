@@ -3,7 +3,9 @@ from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bot.handlers import register_user_handlers
 from bot.database.models import register_models
-from bot.misc import Config, start_schedule, set_language
+from bot.misc.config import Config
+from bot.misc.schedule import start_schedule
+from bot.misc.reformat import set_language
 from bot.misc.throttle import ThrottlingMiddleware
 
 

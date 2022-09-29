@@ -1,20 +1,22 @@
-import asyncio
+from loguru import logger
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery
-from loguru import logger
+from aiohttp.web import HTTPException
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
 from bot.database.methods.get import get_concerts_by_city
-from bot.misc import Config, update_database, get_cities
+from bot.misc.config import Config
+from bot.misc.parser import update_database
+from bot.misc.reformat import get_cities
 
 
 async def __update_db(msg: Message) -> None:
     bot: Bot = msg.bot
     try:
         await update_database()
-        await bot.send_message(msg.from_user.id, 'Информация обновлена')
-    except Exception as exp:
+        await bot.send_message(msg.from_user.id, 'Информация обновлена 💥')
+    except HTTPException as exp:
         logger.error(exp)
-        await bot.send_message(msg.from_user.id, 'Ошибка обновления данных')
+        await bot.send_message(msg.from_user.id, 'Ошибка обновления данных 🤯')
 
 
 async def __start(msg: Message) -> None:
