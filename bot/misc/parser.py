@@ -34,7 +34,6 @@ def get_header() -> dict:
 def fetch(info_blocks: list[BeautifulSoup], city: str) -> None:
     if not info_blocks:
         logger.error(f'Error url: {city}.{Config.URL}')
-        raise HTTPException
 
     for block in info_blocks:
         name = block.find('div', attrs={'class': 'title'}).text.strip()
