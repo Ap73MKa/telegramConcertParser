@@ -1,22 +1,9 @@
-from loguru import logger
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery
-from aiohttp.web import HTTPException
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
 from bot.database.methods.get import get_concerts_by_city
 from bot.misc.config import Config
-from bot.misc.parser import update_database
 from bot.misc.reformat import get_cities
-
-
-async def __update_db(msg: Message) -> None:
-    bot: Bot = msg.bot
-    try:
-        await update_database()
-        await bot.send_message(msg.from_user.id, 'Информация обновлена 💥')
-    except HTTPException as exp:
-        logger.error(exp)
-        await bot.send_message(msg.from_user.id, 'Ошибка обновления данных 🤯')
 
 
 async def __start(msg: Message) -> None:
@@ -60,7 +47,6 @@ async def __site(msg: Message):
 
 def register_user_handlers(dp: Dispatcher) -> None:
     # region message handlers
-    dp.register_message_handler(__update_db, content_types=['text'], text='Обновить базу данных ⚙')
     dp.register_message_handler(__concerts, content_types=['text'], text='Узнать концерты 🔥')
     dp.register_message_handler(__site, content_types=['text'], text='Узнать сайт 💬')
     dp.register_message_handler(__start, commands='start')

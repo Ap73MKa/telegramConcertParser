@@ -6,7 +6,6 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     kb.add(
         KeyboardButton(text='Узнать концерты 🔥'),
-        KeyboardButton(text='Обновить базу данных ⚙'),
         KeyboardButton(text='Узнать сайт 💬')
     )
     return kb
