@@ -3,10 +3,12 @@ from asyncio import gather
 from loguru import logger
 from bs4 import BeautifulSoup
 from aiohttp import ClientSession
-from aiohttp.web import HTTPException
 from bot.misc.config import Config
 from bot.misc.reformat import get_cities, get_city_from_url, reformat_date, reformat_price
 from bot.database.methods.create import create_concert
+from bot.database.methods.get import get_all_concerts
+from bot.database.methods.delete import delete_concert_by_id
+from datetime import date
 
 
 class CategoryId(NamedTuple):
@@ -51,7 +53,15 @@ async def get_page_data(session: ClientSession, url: str) -> None:
         logger.info(f'Parsed: {city}.{Config.URL}')
 
 
+def check_out_dated() -> None:
+    today = date.today()
+    for concert in get_all_concerts():
+        if concert.date < today:
+            delete_concert_by_id(concert.id)
+
+
 async def update_database() -> None:
+    check_out_dated()
     urls = [f'https://{city}.{Config.URL}' for city in get_cities()]
     async with ClientSession(headers=get_header()) as session:
         await gather(*[get_page_data(session, url) for url in urls])
