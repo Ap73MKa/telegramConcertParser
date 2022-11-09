@@ -9,7 +9,7 @@ from bot.misc.reformat import set_language
 from bot.misc.throttle import ThrottlingMiddleware
 
 
-async def on_start_up(dp: Dispatcher):
+async def on_start_up(dp: Dispatcher) -> None:
     logger.info('Bot starts')
     register_models()
     register_user_handlers(dp)

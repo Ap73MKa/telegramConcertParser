@@ -19,7 +19,7 @@ class CategoryId(NamedTuple):
     POP = 3003
 
 
-def get_params():
+def get_params() -> dict[str, list[int] | int]:
     return {
         'category[]': [CategoryId.HUMOR, CategoryId.ELECTRONIC, CategoryId.HIP_HOP,
                        CategoryId.ROCK, CategoryId.POP],
@@ -28,7 +28,7 @@ def get_params():
     }
 
 
-def get_header() -> dict:
+def get_header() -> dict[str, str]:
     return {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
 

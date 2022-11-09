@@ -13,15 +13,15 @@ async def __concerts(msg: Message) -> None:
     await msg.bot.send_message(msg.from_user.id, text='Выберите город:', reply_markup=get_city_keyboard())
 
 
-async def __info(msg: Message):
+async def __info(msg: Message) -> None:
     await msg.bot.send_message(msg.from_user.id, Texts.get_bot_info())
 
 
-async def __city_concert(query: CallbackQuery):
+async def __city_concert(query: CallbackQuery) -> None:
     await query.bot.send_message(query.from_user.id, Texts.get_concert_list(query.data[5:]))
 
 
-async def __site(msg: Message):
+async def __site(msg: Message) -> None:
     await msg.bot.send_message(msg.from_user.id, Texts.get_site_info())
 
 

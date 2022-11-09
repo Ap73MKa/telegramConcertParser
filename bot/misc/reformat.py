@@ -26,7 +26,7 @@ def get_city_from_url(url: str) -> str:
     return url[:url.find('.')]
 
 
-def get_cities():
+def get_cities() -> dict[str, str]:
     return {
         'msk': 'Москва',
         'spb': 'Санкт-Петербург',
