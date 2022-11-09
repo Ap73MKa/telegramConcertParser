@@ -1,48 +1,28 @@
-from aiogram import Bot, Dispatcher
+from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 from bot.keyboards.keyboard import get_main_keyboard, get_city_keyboard
-from bot.database.methods.get import get_concerts_by_city
-from bot.misc.config import Config
-from bot.misc.reformat import get_cities
+from bot.misc.texts import Texts
 
 
 async def __start(msg: Message) -> None:
-    bot: Bot = msg.bot
-    await bot.send_message(msg.from_user.id, text=f'Привет, {msg.from_user.full_name}\n'
-                                                  f'Давай узнаем новые концерты',
+    await msg.bot.send_message(msg.from_user.id, text=Texts.get_welcome_msg(msg.from_user.full_name),
                            reply_markup=get_main_keyboard())
 
 
 async def __concerts(msg: Message) -> None:
-    bot: Bot = msg.bot
-    await bot.send_message(msg.from_user.id, text='Выберите город:', reply_markup=get_city_keyboard())
+    await msg.bot.send_message(msg.from_user.id, text='Выберите город:', reply_markup=get_city_keyboard())
 
 
 async def __info(msg: Message):
-    bot: Bot = msg.bot
-    cities = '\n'.join([f'• {city}' for city in get_cities().values()])
-    await bot.send_message(msg.from_user.id, '<b>tgConcerts</b> - это особый телеграм бот, который собирает '
-                                             'информацию о всех концертах городов России специально для тебя! '
-                                             'Чтобы запустить бота напиши <b>/start</b>\n\n'
-                                             f'На данный момент доступны города:\n{cities}')
+    await msg.bot.send_message(msg.from_user.id, Texts.get_bot_info())
 
 
 async def __city_concert(query: CallbackQuery):
-    bot: Bot = query.bot
-    city_abb = query.data[5:]
-    city_name = get_cities()[city_abb]
-    concert_list = get_concerts_by_city(city_abb)
-    concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')} <i>от {concert.price} ₽</i>\n"
-                              f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
-    await bot.send_message(query.from_user.id, f'<a href="https://{city_abb}.{Config.URL}">{city_name.upper()}</a>.'
-                                               f' Список концертов\n\n\n{concert_list}')
+    await query.bot.send_message(query.from_user.id, Texts.get_concert_list(query.data[5:]))
 
 
 async def __site(msg: Message):
-    bot: Bot = msg.bot
-    await bot.send_message(msg.from_user.id, '<b><a href="https://kassir.ru">Kassir</a></b> - сайт, на котором '
-                                             'мы и узнаем все информацию об концертах. Если вам неудобен наш бот, то '
-                                             'вы всегда можете узнать новую информацию на сайте 🤔')
+    await msg.bot.send_message(msg.from_user.id, Texts.get_site_info())
 
 
 def register_user_handlers(dp: Dispatcher) -> None:

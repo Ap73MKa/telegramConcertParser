@@ -9,7 +9,7 @@ from bot.misc.reformat import set_language
 from bot.misc.throttle import ThrottlingMiddleware
 
 
-async def __on_start_up(dp: Dispatcher):
+async def on_start_up(dp: Dispatcher):
     logger.info('Bot starts')
     register_models()
     register_user_handlers(dp)
@@ -21,4 +21,4 @@ def start_telegram_bot() -> None:
     bot = Bot(token=Config.TOKEN, parse_mode='HTML')
     dp = Dispatcher(bot, storage=MemoryStorage())
     dp.middleware.setup(ThrottlingMiddleware())
-    executor.start_polling(dp, skip_updates=True, on_startup=__on_start_up)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_start_up)
