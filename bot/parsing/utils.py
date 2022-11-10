@@ -1,6 +1,9 @@
 from datetime import date, datetime
 from urllib.parse import urlparse
 
+from bot.database.methods.delete import delete_concert_by_id
+from bot.database.methods.get import get_all_concerts
+
 
 def reformat_date(concert_date: str) -> date:
     concert_date = datetime.strptime(concert_date[:6].lower(), '%d %b').date()
@@ -28,3 +31,10 @@ def get_cities() -> dict[str, str]:
         'kzn': 'Казань',
         'vlm': 'Владимир'
     }
+
+
+def check_out_dated() -> None:
+    today = date.today()
+    for concert in get_all_concerts():
+        if concert.date < today:
+            delete_concert_by_id(concert.id)

@@ -1,4 +1,4 @@
-from .parser import check_out_dated, update_database
+from .parser import update_database
 from .texts import Texts
-from .utils import get_cities
+from .utils import get_cities, check_out_dated
 from .schedule import start_schedule
