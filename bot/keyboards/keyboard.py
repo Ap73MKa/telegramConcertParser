@@ -1,4 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+
 from bot.parsing import get_cities
 
 

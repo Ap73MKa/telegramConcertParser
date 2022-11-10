@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 from bot.keyboards import get_main_keyboard, get_city_keyboard
-from bot.parsing import Texts
+from bot.misc import Texts
 
 
 async def start(msg: Message) -> None:

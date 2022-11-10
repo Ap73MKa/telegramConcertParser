@@ -1,6 +1,7 @@
 from loguru import logger
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from .parser import update_database
+
+from bot.parsing.update import update_database
 
 
 def start_schedule() -> None:
