@@ -1,6 +1,6 @@
 from loguru import logger
 from bot import start_telegram_bot
-from bot.misc.path import PathManager
+from bot.misc import PathManager
 
 
 def main():

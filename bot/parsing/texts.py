@@ -1,7 +1,7 @@
 from abc import ABC
-from bot.misc.reformat import get_cities
-from bot.misc.config import Config
+from bot.misc import Config
 from bot.database.methods.get import get_concerts_by_city
+from .utils import get_cities
 
 
 class Texts(ABC):

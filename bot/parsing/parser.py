@@ -1,14 +1,15 @@
+from datetime import date
 from typing import NamedTuple
 from asyncio import gather
 from loguru import logger
 from bs4 import BeautifulSoup
 from aiohttp import ClientSession
-from bot.misc.config import Config
-from bot.misc.reformat import get_cities, get_city_from_url, reformat_date, reformat_price
+
+from bot.misc import Config
 from bot.database.methods.create import create_concert
 from bot.database.methods.get import get_all_concerts
 from bot.database.methods.delete import delete_concert_by_id
-from datetime import date
+from .utils import get_cities, get_city_from_url, reformat_date, reformat_price
 
 
 class CategoryId(NamedTuple):
