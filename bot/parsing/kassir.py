@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 from .parser import Parser
 from .utils import get_cities
-from bot.misc.constants import KASSIR_URL
+from bot.misc import Config
 from bot.database.methods.create import create_concert
 
 
@@ -20,7 +20,7 @@ class CategoryId(NamedTuple):
 
 class Kassir(Parser):
 
-    urls = [f'https://{city}.{KASSIR_URL}' for city in get_cities()]
+    urls = [f'https://{city}.{Config.KASSIR_SITE}' for city in get_cities()]
     params = {
         'category[]': [CategoryId.HUMOR,
                        CategoryId.ELECTRONIC,
@@ -55,7 +55,7 @@ class Kassir(Parser):
         link = info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
         create_concert(name, self.__reformat_date(date), self.__reformat_price(price), city, link)
 
-    def fetch(self, page_data: BeautifulSoup, url) -> None:
+    def fetch(self, page_data: BeautifulSoup, url: str) -> None:
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
         city = self.__get_city_from_url(url)
         if not info_blocks:
