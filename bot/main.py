@@ -1,10 +1,11 @@
 from loguru import logger
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
 from bot.handlers import register_user_handlers
 from bot.database import register_models
-from bot.misc import Config, set_language, ThrottlingMiddleware
 from bot.parsing import start_schedule
+from bot.misc import Config, set_language, ThrottlingMiddleware
 
 
 async def on_start_up(dp: Dispatcher) -> None:
