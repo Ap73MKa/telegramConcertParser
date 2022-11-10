@@ -1,5 +1,5 @@
 from abc import ABC
-from bot.misc import Config
+from bot.misc.constants import KASSIR_URL
 from bot.parsing import get_cities
 from bot.database.methods.get import get_concerts_by_city
 
@@ -24,7 +24,7 @@ class Texts(ABC):
         concert_list = get_concerts_by_city(city_abb)
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')} <i>от {concert.price} ₽</i>\n"
                                   f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
-        return f'<a href="https://{city_abb}.{Config.URL}">{city_name.upper()}</a>. ' \
+        return f'<a href="https://{city_abb}.{KASSIR_URL}">{city_name.upper()}</a>. ' \
                f'Список концертов\n\n\n{concert_list}'
 
     @staticmethod
