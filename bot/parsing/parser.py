@@ -20,6 +20,7 @@ class Parser(ABC):
             logger.info(f'Parsing: {response.url}')
             return self.fetch(BeautifulSoup(await response.text(), 'lxml'), url)
 
+
     async def get_data_from_all_urls(self) -> tuple:
         async with ClientSession(headers=self.header) as session:
             data = await gather(*[self.get_page_data(session, url) for url in self.urls])
