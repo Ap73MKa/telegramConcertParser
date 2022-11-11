@@ -5,6 +5,7 @@ from asyncio import gather
 from loguru import logger
 
 
+
 class Parser(ABC):
 
     urls = []
