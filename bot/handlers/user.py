@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 
 from bot.misc import Texts
+# from bot.parsing import update_database
 from bot.keyboards import get_main_keyboard, get_city_keyboard
 
 
@@ -26,11 +27,17 @@ async def site(msg: Message) -> None:
     await msg.bot.send_message(msg.from_user.id, Texts.get_site_info())
 
 
+# async def check(msg: Message) -> None:
+#     await update_database()
+#     await msg.bot.send_message(msg.from_user.id, 'Checked')
+
+
 def register_user_handlers(dp: Dispatcher) -> None:
     # region message handlers
     dp.register_message_handler(concerts, content_types=['text'], text='Узнать концерты 🔥')
     dp.register_message_handler(site, content_types=['text'], text='Узнать сайт 💬')
     dp.register_message_handler(start, commands='start')
+    # dp.register_message_handler(start, commands='check')
     dp.register_message_handler(info)
     # endregion
 
