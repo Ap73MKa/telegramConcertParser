@@ -61,15 +61,15 @@ class Kassir(Parser):
             'city': city
         }
 
-    def fetch(self, page_data: BeautifulSoup, url: str) -> tuple:
+    def fetch(self, page_data: BeautifulSoup, url: str) -> tuple[dict[str]]:
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
         city = self.__get_city_from_url(url)
         if not info_blocks:
             logger.error(f'Error url: {url}')
-        data = []
+        my_list = []
         for info_block in info_blocks:
             try:
-                data += self.__create_concert_on_data(info_block, city)
+                my_list.append(self.__create_concert_on_data(info_block, city))
             except:
-                pass
-        return tuple(data)
+                print('got error')
+        return tuple(my_list)
