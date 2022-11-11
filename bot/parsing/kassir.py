@@ -33,7 +33,11 @@ class Kassir(Parser):
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
         concert_date = concert_date.replace('май', 'мая', 1) if 'май' in concert_date else concert_date
-        concert_date = datetime.strptime(concert_date[:6].lower(), '%d %b').date()
+        if 'май' in concert_date:
+            day, _ = concert_date[:6].lower().strip()
+            concert_date = date(2000, 5, day)
+        else:
+            concert_date = datetime.strptime(concert_date[:6].lower(), '%d %b').date()
         year = date.today().year + 1 if concert_date.month < date.today().month else date.today().year
         return concert_date.replace(year=year)
 
@@ -57,9 +61,15 @@ class Kassir(Parser):
             'city': city
         }
 
-    def fetch(self, page_data: BeautifulSoup, url: str) -> tuple[dict[str]]:
+    def fetch(self, page_data: BeautifulSoup, url: str) -> tuple:
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
         city = self.__get_city_from_url(url)
         if not info_blocks:
             logger.error(f'Error url: {url}')
-        return tuple(self.__create_concert_on_data(info_block, city) for info_block in info_blocks)
+        data = []
+        for info_block in info_blocks:
+            try:
+                data += self.__create_concert_on_data(info_block, city)
+            except:
+                pass
+        return tuple(data)
