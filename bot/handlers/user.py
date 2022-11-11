@@ -37,7 +37,7 @@ def register_user_handlers(dp: Dispatcher) -> None:
     dp.register_message_handler(concerts, content_types=['text'], text='Узнать концерты 🔥')
     dp.register_message_handler(site, content_types=['text'], text='Узнать сайт 💬')
     dp.register_message_handler(start, commands='start')
-    dp.register_message_handler(start, commands='check')
+    dp.register_message_handler(check, commands='check')
     dp.register_message_handler(info)
     # endregion
 
