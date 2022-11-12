@@ -19,16 +19,18 @@ class CategoryId(NamedTuple):
 
 class Kassir(Parser):
 
-    urls = [f'https://{city}.{Config.KASSIR_SITE}' for city in get_cities()]
-    params = {
-        'category[]': [CategoryId.HUMOR,
-                       CategoryId.ELECTRONIC,
-                       CategoryId.HIP_HOP,
-                       CategoryId.ROCK,
-                       CategoryId.POP],
-        'sort': 0,
-        'c': 30
-    }
+    def __init__(self):
+        super().__init__()
+        self.urls = [f'https://{city}.{Config.KASSIR_SITE}' for city in get_cities()]
+        self.params = {
+            'category[]': [CategoryId.HUMOR,
+                           CategoryId.ELECTRONIC,
+                           CategoryId.HIP_HOP,
+                           CategoryId.ROCK,
+                           CategoryId.POP],
+            'sort': 0,
+            'c': 30
+        }
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
@@ -65,6 +67,6 @@ class Kassir(Parser):
         for info_block in info_blocks:
             try:
                 my_list.append(self.__create_concert_on_data(info_block, city))
-            except:
-                print('got error')
+            except Exception as e:
+                logger.error(e)
         return tuple(my_list)
