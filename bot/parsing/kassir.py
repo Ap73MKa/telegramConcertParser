@@ -5,8 +5,7 @@ from loguru import logger
 from urllib.parse import urlparse
 
 from .parser import Parser
-from bot.modules.get_cities import get_cities
-from bot.modules import Config
+from bot.modules import Config, get_cities
 
 
 class CategoryId(NamedTuple):
@@ -61,7 +60,7 @@ class Kassir(Parser):
             try:
                 data_list.append(self.__get_data_of_concert(block))
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
         return data_list
 
     def fetch(self, page_data: BeautifulSoup, url: str) -> list[dict[str]]:

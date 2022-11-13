@@ -5,6 +5,7 @@ from asyncio import gather
 from loguru import logger
 
 
+# todo documentation and replace BeautifulSoup
 class Parser(ABC):
 
     def __init__(self):
@@ -16,7 +17,7 @@ class Parser(ABC):
     def fetch(self, page_data: BeautifulSoup, url: str) -> tuple[dict[str]]:
         pass
 
-    async def get_page_data(self, session, url: str) -> tuple[dict[str]]:
+    async def get_page_data(self, session: ClientSession, url: str) -> tuple[dict[str]]:
         async with session.get(url, params=self.params) as response:
             logger.info(f'Parsing: {response.url}')
             return self.fetch(BeautifulSoup(await response.text(), 'lxml'), url)

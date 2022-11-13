@@ -2,7 +2,8 @@ from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 
 from bot.modules import Messages
-from bot.parsing import update_database
+from bot.parsing import create_concerts
+from bot.database.methods.other import clean_outdated_concerts
 from bot.keyboards import get_main_keyboard, get_city_keyboard
 
 
@@ -28,7 +29,8 @@ async def site(msg: Message) -> None:
 
 
 async def check(msg: Message) -> None:
-    await update_database()
+    clean_outdated_concerts()
+    await create_concerts()
     await msg.bot.send_message(msg.from_user.id, 'Checked')
 
 

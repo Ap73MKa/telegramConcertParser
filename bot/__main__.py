@@ -4,8 +4,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from bot.handlers import register_user_handlers
 from bot.database import register_models
-from bot.parsing import start_schedule
-from bot.modules import Config, set_language, ThrottlingMiddleware, PathManager
+from bot.modules import Config, set_language, ThrottlingMiddleware, PathManager, Schedule
+from bot.parsing import create_concerts
+from bot.database.methods.other import clean_outdated_concerts
 
 
 async def on_start_up(dp: Dispatcher) -> None:
@@ -13,7 +14,7 @@ async def on_start_up(dp: Dispatcher) -> None:
     register_models()
     register_user_handlers(dp)
     set_language()
-    start_schedule()
+    Schedule([create_concerts, clean_outdated_concerts])
 
 
 def start_telegram_bot() -> None:

@@ -1,1 +1,1 @@
-from .schedule import start_schedule, update_database
+from .update import create_concerts
