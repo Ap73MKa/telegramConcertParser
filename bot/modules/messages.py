@@ -1,10 +1,11 @@
 from abc import ABC
 
-from bot.misc import Config
-from bot.parsing import get_cities
+from .config import Config
+from .get_cities import get_cities
 from bot.database.methods.get import get_concerts_by_city
 
 
+# todo remade Message to module type, remove dependencies
 class Messages(ABC):
 
     @staticmethod

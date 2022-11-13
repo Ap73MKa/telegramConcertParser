@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 
-from bot.misc import Messages
+from bot.modules import Messages
 from bot.parsing import update_database
 from bot.keyboards import get_main_keyboard, get_city_keyboard
 

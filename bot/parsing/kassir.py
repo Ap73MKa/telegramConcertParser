@@ -5,8 +5,8 @@ from loguru import logger
 from urllib.parse import urlparse
 
 from .parser import Parser
-from .utils import get_cities
-from bot.misc import Config
+from bot.modules.get_cities import get_cities
+from bot.modules import Config
 
 
 class CategoryId(NamedTuple):

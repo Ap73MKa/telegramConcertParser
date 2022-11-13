@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from bot.misc.singleton import SingletonMeta
+from bot.modules.singleton import SingletonMeta
 
 
 class Database(metaclass=SingletonMeta):
