@@ -5,7 +5,7 @@ from bot.parsing import get_cities
 from bot.database.methods.get import get_concerts_by_city
 
 
-class Texts(ABC):
+class Messages(ABC):
 
     @staticmethod
     def get_site_info() -> str:
@@ -24,6 +24,8 @@ class Texts(ABC):
         city_name = get_cities()[city_abb]
         concert_list = get_concerts_by_city(city_abb)
         concert_list = concert_list[len(concert_list)-20:]
+        for concert in concert_list:
+            concert.name = f'{concert.name[:37]}...' if len(concert.name) > 40 else concert.name
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
                                   f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
         return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{city_name.upper()}</a>. ' \

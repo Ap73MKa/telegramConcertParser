@@ -49,24 +49,22 @@ class Kassir(Parser):
         url = urlparse(url).netloc
         return url[:url.find('.')]
 
-    def __create_concert_on_data(self, info_block: BeautifulSoup, city: str) -> dict[str]:
-        return {
-            'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
-            'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
-            'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
-            'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href'),
-            'city': city
-        }
+    def __get_data_of_concert(self, info_block: BeautifulSoup) -> dict[str]:
+        return {'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
+                'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
+                'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
+                'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')}
 
-    def fetch(self, page_data: BeautifulSoup, url: str) -> tuple[dict[str]]:
-        info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
-        city = self.__get_city_from_url(url)
-        if not info_blocks:
-            logger.error(f'Error url: {url}')
-        my_list = []
-        for info_block in info_blocks:
+    def __get_data_from_info_blocks(self, info_blocks: list[BeautifulSoup]) -> list[dict[str]]:
+        data_list = []
+        for block in info_blocks:
             try:
-                my_list.append(self.__create_concert_on_data(info_block, city))
+                data_list.append(self.__get_data_of_concert(block))
             except Exception as e:
-                logger.error(e)
-        return tuple(my_list)
+                logger.exception(e)
+        return data_list
+
+    def fetch(self, page_data: BeautifulSoup, url: str) -> list[dict[str]]:
+        city = self.__get_city_from_url(url)
+        info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
+        return [dict(item, **{'city': city}) for item in self.__get_data_from_info_blocks(info_blocks)]

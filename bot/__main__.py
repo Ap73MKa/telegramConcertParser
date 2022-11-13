@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bot.handlers import register_user_handlers
 from bot.database import register_models
 from bot.parsing import start_schedule
-from bot.misc import Config, set_language, ThrottlingMiddleware
+from bot.misc import Config, set_language, ThrottlingMiddleware, PathManager
 
 
 async def on_start_up(dp: Dispatcher) -> None:
@@ -21,3 +21,9 @@ def start_telegram_bot() -> None:
     dp = Dispatcher(bot, storage=MemoryStorage())
     dp.middleware.setup(ThrottlingMiddleware())
     executor.start_polling(dp, skip_updates=True, on_startup=on_start_up)
+
+
+if __name__ == '__main__':
+    log_path = PathManager.get('logs/{time}.log')
+    logger.add(log_path, format="{time} {level} {message}", rotation="10:00", compression="zip", retention="3 days")
+    start_telegram_bot()
