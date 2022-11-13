@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 
 from bot.modules import Messages
 from bot.parsing import create_concerts
-from bot.database.methods.other import clean_outdated_concerts
+from bot.database import clean_outdated_concerts
 from bot.keyboards import get_main_keyboard, get_city_keyboard
 
 

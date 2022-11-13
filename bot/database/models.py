@@ -1,16 +1,20 @@
-from sqlalchemy import Column, Integer, Text, Date
-from .main import Database
+from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField
+from .main import db
 
 
-class Concert(Database.BASE):
-    __tablename__ = 'CONCERT'
-    id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    date = Column(Date)
-    price = Column(Integer)
-    city = Column(Text)
-    url = Column(Text)
+class BaseModel(Model):
+    class Meta:
+        database = db
+
+
+class Concert(BaseModel):
+    id = PrimaryKeyField(null=False)
+    name = TextField()
+    date = DateField()
+    price = IntegerField()
+    city = TextField()
+    url = TextField()
 
 
 def register_models() -> None:
-    Database.BASE.metadata.create_all(Database().engine)
+    Concert.create_table()

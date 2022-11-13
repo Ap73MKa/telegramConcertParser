@@ -3,10 +3,9 @@ from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from bot.handlers import register_user_handlers
-from bot.database import register_models
+from bot.database import register_models, clean_outdated_concerts
 from bot.modules import Config, set_language, ThrottlingMiddleware, PathManager, Schedule
 from bot.parsing import create_concerts
-from bot.database.methods.other import clean_outdated_concerts
 
 
 async def on_start_up(dp: Dispatcher) -> None:

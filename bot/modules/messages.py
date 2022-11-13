@@ -2,7 +2,7 @@ from abc import ABC
 
 from .config import Config
 from .get_cities import get_cities
-from bot.database.methods.get import get_concerts_by_city
+from bot.database import get_concerts_by_city
 
 
 # todo remade Message to module type, remove dependencies

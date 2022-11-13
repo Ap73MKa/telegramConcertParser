@@ -1,7 +1,9 @@
 aiogram==2.23.1
-loguru~=0.6.0
-SQLAlchemy==1.4.44
-aiohttp~=3.8.1
+peewee~=3.15.4
+
 beautifulsoup4~=4.11.1
 lxml~=4.9.1
+aiohttp~=3.8.1
+
+loguru~=0.6.0
 APScheduler~=3.9.1
