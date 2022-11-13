@@ -14,7 +14,8 @@ async def on_start_up(dp: Dispatcher) -> None:
     register_models()
     register_user_handlers(dp)
     set_language()
-    Schedule([create_concerts, clean_outdated_concerts])
+    scheduler = Schedule([create_concerts, clean_outdated_concerts])
+    scheduler.start()
 
 
 def start_telegram_bot() -> None:
