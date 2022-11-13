@@ -21,19 +21,6 @@
 #     def engine(self):
 #         return self.__engine
 
-
-# from bot.modules.singleton import SingletonMeta
-# import peewee
-#
-#
-# class Database(metaclass=SingletonMeta):
-#
-#     def __init__(self):
-#         self.__engine = peewee.SqliteDatabase('database.db')
-#
-#     @property
-#     def engine(self):
-#         return self.__engine
 from peewee import SqliteDatabase
 
 
