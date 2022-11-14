@@ -1,4 +1,5 @@
 from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField
+
 from .main import db
 
 
@@ -7,7 +8,7 @@ class BaseModel(Model):
         database = db
 
 
-class Concert(Model):
+class Concert(BaseModel):
     id = PrimaryKeyField(null=False)
     name = TextField()
     date = DateField()
@@ -15,10 +16,7 @@ class Concert(Model):
     city = TextField()
     url = TextField()
 
-    class Meta:
-        database = db
-
 
 def register_models() -> None:
-    for model in Model.__subclasses__():
+    for model in BaseModel.__subclasses__():
         model.create_table()
