@@ -7,7 +7,7 @@ class BaseModel(Model):
         database = db
 
 
-class Concert(BaseModel):
+class Concert(Model):
     id = PrimaryKeyField(null=False)
     name = TextField()
     date = DateField()
@@ -15,6 +15,10 @@ class Concert(BaseModel):
     city = TextField()
     url = TextField()
 
+    class Meta:
+        database = db
+
 
 def register_models() -> None:
-    Concert.create_table()
+    for model in Model.__subclasses__():
+        model.create_table()
