@@ -1,4 +1,5 @@
 from peewee import SqliteDatabase
+from bot.modules import Config
 
 
-db = SqliteDatabase('database.db')
+db = SqliteDatabase(Config.DATABASE)

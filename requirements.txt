@@ -1,9 +1,12 @@
+# database and bot
 aiogram==2.23.1
 peewee~=3.15.4
 
+# parsing libs
 beautifulsoup4~=4.11.1
 lxml~=4.9.1
 aiohttp~=3.8.1
 
+# utils
 loguru~=0.6.0
 APScheduler~=3.9.1

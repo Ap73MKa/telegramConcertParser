@@ -41,7 +41,7 @@ class Kassir(Parser):
     @staticmethod
     def __reformat_price(price: str) -> int:
         pos = price.find('—')
-        price = price[:pos] if pos != 0 else price
+        price = price[:pos] if pos != -1 else price
         return int(''.join(filter(str.isdigit, price)))
 
     @staticmethod
@@ -64,7 +64,8 @@ class Kassir(Parser):
                 logger.error(e)
         return data_list
 
-    def fetch(self, page_data: BeautifulSoup) -> list[dict[str]]:
+    def fetch(self, page_data: str) -> list[dict[str]]:
+        page_data = BeautifulSoup(page_data, 'lxml')
         city = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
         return [dict(item, **{'city': city}) for item in self.__get_data_from_info_blocks(info_blocks)]
