@@ -1,11 +1,12 @@
 from typing import NamedTuple
 from datetime import date, datetime
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from loguru import logger
-from urllib.parse import urlparse
 
-from .parser import Parser
 from bot.modules import Config, get_cities
+from .parser import Parser
+
 
 
 class CategoryId(NamedTuple):
@@ -67,4 +68,3 @@ class Kassir(Parser):
         city = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
         return [dict(item, **{'city': city}) for item in self.__get_data_from_info_blocks(info_blocks)]
-

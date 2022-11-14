@@ -1,7 +1,7 @@
 from abc import ABC
+from asyncio import gather
 from bs4 import BeautifulSoup
 from aiohttp import ClientSession
-from asyncio import gather
 from loguru import logger
 
 

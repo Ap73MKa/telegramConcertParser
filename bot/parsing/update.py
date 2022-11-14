@@ -1,6 +1,5 @@
-from .kassir import Kassir
-
 from bot.database import create_concert
+from .kassir import Kassir
 
 
 async def create_concerts():

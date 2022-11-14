@@ -13,7 +13,7 @@ def get_concert_by_id(concert_id: int) -> Concert | None:
 
 
 def get_concerts_by_city(city_abb: str) -> list[Concert] | None:
-    return Concert.select().order_by(Concert.date.desc()).where(Concert.city == city_abb)
+    return Concert.select().where(Concert.city == city_abb).order_by(Concert.date.desc())
 
 
 def delete_concert_by_id(concert_id: int) -> None:
