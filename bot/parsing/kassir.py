@@ -8,7 +8,6 @@ from bot.modules import Config, get_cities
 from .parser import Parser
 
 
-
 class CategoryId(NamedTuple):
     HUMOR = 4073
     HIP_HOP = 3007
@@ -34,7 +33,8 @@ class Kassir(Parser):
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
-        concert_date = datetime.strptime(concert_date[:6].lower(), '%d %b').date()
+        concert_date = date(2022, 5, int(concert_date.strip()[0])) if 'май' in concert_date[:6]\
+            else datetime.strptime(concert_date[:6].lower(), '%d %b').date()
         year = date.today().year + 1 if concert_date.month < date.today().month else date.today().year
         return concert_date.replace(year=year)
 
