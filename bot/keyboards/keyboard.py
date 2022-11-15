@@ -12,8 +12,8 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
     return kb
 
 
-def get_city_keyboard() -> InlineKeyboardMarkup:
+def get_city_keyboard(city_abb_list: list[str]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(row_width=1)
-    for abb, city in get_cities().items():
-        kb.add(InlineKeyboardButton(text=city, callback_data=f'city-{abb}'))
+    for abb in city_abb_list:
+        kb.add(InlineKeyboardButton(text=get_cities()[abb], callback_data=f'city-{abb}'))
     return kb

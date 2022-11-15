@@ -17,6 +17,13 @@ class Concert(BaseModel):
     url = TextField()
 
 
+# todo CityList and List models (many-to-many relationships)
+class User(BaseModel):
+    id = PrimaryKeyField(null=False)
+    telegram_id = IntegerField(unique=True)
+    cities = TextField(default="msk||spb")
+
+
 def register_models() -> None:
     for model in BaseModel.__subclasses__():
         model.create_table()

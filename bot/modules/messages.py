@@ -15,15 +15,21 @@ class Messages(ABC):
 
     @staticmethod
     def get_bot_info() -> str:
-        cities = '\n'.join([f'• {city}' for city in get_cities().values()])
+        count = len(list(get_cities()))
+        cities = '\n'.join([f'• {city}' for city in list(get_cities().values())[:6]])
         return f'<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов ' \
                f'России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны ' \
-               f'города:\n{cities}'
+               f'города:\n{cities}\n И еще более {count - 6} городов!'
+
+    @staticmethod
+    def get_before_list_msg() -> str:
+        return 'Введите <b>название города</b> или выберите город из истории поиска:'
 
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
         concert_list = get_concerts_by_city(city_abb)
-        concert_list = concert_list[len(concert_list) - 20:]
+        if len(concert_list) > 20:
+            concert_list = concert_list[len(concert_list) - 20:]
         for concert in concert_list:
             concert.name = f'{concert.name[:37]}...' if len(concert.name) > 40 else concert.name
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
