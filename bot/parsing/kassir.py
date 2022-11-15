@@ -34,7 +34,11 @@ class Kassir(Parser):
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
         day, month = concert_date.split()[:2]
-        concert_date = datetime.strptime(' '.join([day, month[:3].lower()]), '%d %b').date()
+        month = month[:3].lower()
+        if month == 'май':
+            concert_date = date(2022, 5, int(day))
+        else:
+            concert_date = datetime.strptime(' '.join([day, month]), '%d %b').date()
         year = date.today().year + 1 if concert_date.month < date.today().month else date.today().year
         return concert_date.replace(year=year)
 
