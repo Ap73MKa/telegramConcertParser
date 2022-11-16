@@ -1,1 +1,1 @@
-from .controller import create_concerts
+from .controller import create_concerts, update_cities

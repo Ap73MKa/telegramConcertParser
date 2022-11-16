@@ -21,15 +21,15 @@ class Kassir(Parser):
     def __init__(self):
         super().__init__()
         self.urls = [f'https://{city}.{Config.KASSIR_SITE}' for city in get_cities()]
-        # self.params = {
-        #     'category[]': [CategoryId.HUMOR,
-        #                    CategoryId.ELECTRONIC,
-        #                    CategoryId.HIP_HOP,
-        #                    CategoryId.ROCK,
-        #                    CategoryId.POP],
-        #     'sort': 0,
-        #     'c': 30
-        # }
+        self.params = {
+            # 'category[]': [CategoryId.HUMOR,
+            #                CategoryId.ELECTRONIC,
+            #                CategoryId.HIP_HOP,
+            #                CategoryId.ROCK,
+            #                CategoryId.POP],
+            'sort': 0,
+            'c': 30
+        }
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
@@ -46,10 +46,9 @@ class Kassir(Parser):
     def __reformat_price(price: str) -> int:
         pos = price.find('—')
         price = price[:pos] if pos != -1 else price
-        result = int(''.join(filter(str.isdigit, price)))
-        if result == '':
+        if price == 'Бесплатно':
             return 0
-        return result
+        return int(''.join(filter(str.isdigit, price)))
 
     @staticmethod
     def __get_city_from_url(url: str) -> str:
