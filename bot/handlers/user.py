@@ -2,44 +2,39 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from bot.modules import Messages, get_cities
+from bot.modules import Messages
 from bot.parsing import create_concerts
-from bot.database import clean_outdated_concerts, create_user, get_user_by_id
+from bot.database import clean_outdated_concerts, create_user
+from bot.database.city_list import add_user_city, get_all_city_of_user, get_city_by_name
 from bot.keyboards import get_main_keyboard, get_city_keyboard
 from .states import MenuStates
-from bot.database.city_list import add_user_city
 
 
 async def start(msg: Message, state: FSMContext) -> None:
-    create_user(msg.from_user.id)
+    user_id = msg.from_user.id
+    create_user(user_id)
+    add_user_city(user_id, 'msk')
+    add_user_city(user_id, 'spb')
     await state.set_state(MenuStates.main_menu)
-    await msg.bot.send_message(msg.from_user.id, text=Messages.get_welcome_msg(msg.from_user.full_name),
+    await msg.bot.send_message(user_id, text=Messages.get_welcome_msg(msg.from_user.full_name),
                                reply_markup=get_main_keyboard())
 
 
 async def concerts(msg: Message, state: FSMContext) -> None:
-    user = get_user_by_id(msg.from_user.id)
-    cities = user.cities.split(sep='||')
+    cities = [city.city.abb for city in get_all_city_of_user(msg.from_user.id)]
     await msg.bot.send_message(msg.from_user.id, text=Messages.get_before_list_msg(),
                                reply_markup=get_city_keyboard(cities))
     await state.set_state(MenuStates.choose_city)
 
 
 async def init_city_by_msg(msg: Message, state: FSMContext) -> None:
-    text = msg.text.lower().strip()
-    user_id = msg.from_user.id
-
-    city_abb = None
-    for key, value in get_cities().items():
-        if value.lower() == text:
-            city_abb = key
-
-    if city_abb:
-        add_user_city(user_id, city_abb)
+    city = get_city_by_name(msg.text.lower().strip())
+    if city:
+        add_user_city(msg.from_user.id, city.abb)
         await state.set_state(MenuStates.main_menu)
-        await msg.bot.send_message(user_id, Messages.get_concert_list(city_abb))
+        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
     else:
-        await msg.bot.send_message(user_id, 'Ошибка ввода, повторите попытку')
+        await msg.bot.send_message(msg.from_user.id, 'Ошибка ввода, повторите попытку')
 
 
 async def info(msg: Message, state: FSMContext) -> None:

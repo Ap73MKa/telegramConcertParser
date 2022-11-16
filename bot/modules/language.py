@@ -4,4 +4,4 @@ from loguru import logger
 
 def set_language() -> None:
     setlocale(LC_ALL, ('ru_RU', 'UTF-8'))
-    logger.info('Language changed to Russian')
+    logger.info('Locale changed to ru_RU.UTF-8')

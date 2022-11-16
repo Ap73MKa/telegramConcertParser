@@ -1,5 +1,6 @@
-from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField
+from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField
 
+from datetime import datetime
 from .main import db
 
 
@@ -13,10 +14,9 @@ class City(BaseModel):
     name = TextField()
 
 
-class UserCity(BaseModel):
+class User(BaseModel):
     id = PrimaryKeyField(null=False)
-    user_id = IntegerField()
-    city = ForeignKeyField(City, backref='city')
+    user_id = IntegerField(unique=True)
 
 
 class Concert(BaseModel):
@@ -28,10 +28,11 @@ class Concert(BaseModel):
     url = TextField()
 
 
-class User(BaseModel):
+class UserCity(BaseModel):
     id = PrimaryKeyField(null=False)
-    user_id = IntegerField(unique=True)
-    # cities = ForeignKeyField(UserCity, backref='user-city')
+    user = ForeignKeyField(User, backref='user')
+    city = ForeignKeyField(City, backref='city')
+    date = DateTimeField(default=datetime.today())
 
 
 def register_models() -> None:

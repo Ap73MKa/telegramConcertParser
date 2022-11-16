@@ -5,7 +5,7 @@ from .models import Concert
 
 def create_concert(name: str, start_date: date, price: int, city: str, url: str) -> None:
     if not Concert.get_or_none(Concert.name == name):
-        Concert(name=name, date=start_date, price=price, city=city, url=url).save()
+        Concert.create(name=name, date=start_date, price=price, city=city, url=url)
 
 
 def get_concert_by_id(concert_id: int) -> Concert | None:

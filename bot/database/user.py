@@ -7,4 +7,4 @@ def get_user_by_id(user_id: int) -> User | None:
 
 def create_user(user_id: int) -> None:
     if not get_user_by_id(user_id):
-        User(user_id=user_id).save()
+        User.create(user_id=user_id)
