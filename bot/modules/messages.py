@@ -1,11 +1,9 @@
 from abc import ABC
 
-from bot.database import get_concerts_by_city
+from bot.database import get_concerts_by_city, get_all_city,get_city_by_abb
 from .config import Config
-from .get_cities import get_cities
 
 
-# todo remade Message to module type, remove dependencies
 class Messages(ABC):
 
     @staticmethod
@@ -15,8 +13,8 @@ class Messages(ABC):
 
     @staticmethod
     def get_bot_info() -> str:
-        count = len(list(get_cities()))
-        cities = '\n'.join([f'• {city}' for city in list(get_cities().values())[:6]])
+        count = len(list(get_all_city()))
+        cities = '\n'.join([f'• {city.name}' for city in get_all_city()[:6]])
         return f'<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов ' \
                f'России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны ' \
                f'города:\n{cities}\n И еще более {count - 6} городов!'
@@ -28,13 +26,16 @@ class Messages(ABC):
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
         concert_list = get_concerts_by_city(city_abb)
+
         if len(concert_list) > 20:
             concert_list = concert_list[len(concert_list) - 20:]
+
         for concert in concert_list:
             concert.name = f'{concert.name[:37]}...' if len(concert.name) > 40 else concert.name
+
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
                                   f"<b><a href='{concert.url}'>{concert.name}</a></b>\n" for concert in concert_list])
-        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{get_cities()[city_abb].upper()}</a>. ' \
+        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{get_city_by_abb(city_abb).name.upper()}</a>. ' \
                f'Список концертов\n\n\n{concert_list}'
 
     @staticmethod

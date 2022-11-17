@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.database.city_list import get_city_by_abb
+from bot.database.city import get_city_by_abb
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:

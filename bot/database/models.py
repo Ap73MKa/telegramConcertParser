@@ -1,7 +1,10 @@
-from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField
-
 from datetime import datetime
-from .main import db
+from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField,\
+    SqliteDatabase
+from bot.modules.config import Config
+
+
+db = SqliteDatabase(Config.DATABASE)
 
 
 class BaseModel(Model):
@@ -32,7 +35,7 @@ class UserCity(BaseModel):
     id = PrimaryKeyField(null=False)
     user = ForeignKeyField(User, backref='user')
     city = ForeignKeyField(City, backref='city')
-    date = DateTimeField(default=datetime.today())
+    date = DateTimeField(default=datetime.now)
 
 
 def register_models() -> None:

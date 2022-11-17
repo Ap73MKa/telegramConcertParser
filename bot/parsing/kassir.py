@@ -4,7 +4,8 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from loguru import logger
 
-from bot.modules import Config, get_cities
+from bot.modules import Config
+from bot.database import get_all_city
 from .parser import Parser
 
 
@@ -20,7 +21,7 @@ class Kassir(Parser):
 
     def __init__(self):
         super().__init__()
-        self.urls = [f'https://{city}.{Config.KASSIR_SITE}' for city in get_cities()]
+        self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_city()]
         self.params = {
             # 'category[]': [CategoryId.HUMOR,
             #                CategoryId.ELECTRONIC,
@@ -33,6 +34,8 @@ class Kassir(Parser):
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
+        if not any(map(str.isdigit, concert_date)):
+            return date.today()
         day, month = concert_date.split()[:2]
         month = month[:3].lower()
         if month == 'май':

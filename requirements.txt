@@ -9,4 +9,3 @@ aiohttp~=3.8.1
 
 # utils
 loguru~=0.6.0
-APScheduler~=3.9.1

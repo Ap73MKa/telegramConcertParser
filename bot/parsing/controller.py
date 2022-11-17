@@ -1,5 +1,5 @@
 from bot.database import create_concert
-from bot.database.city_list import create_city, get_all_city
+from bot.database.city import create_city, get_all_city
 from .kassir import Kassir
 from .kassir_cities import KassirCities
 

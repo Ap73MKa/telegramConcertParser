@@ -23,5 +23,7 @@ def delete_concert_by_id(concert_id: int) -> None:
 
 
 def clean_outdated_concerts() -> None:
-    for concert in Concert.select().where(Concert.date < date.today()):
-        delete_concert_by_id(concert.id)
+    concert_list = Concert.select().where(Concert.date < date.today())
+    if concert_list:
+        for concert in concert_list:
+            delete_concert_by_id(concert.id)

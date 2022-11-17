@@ -1,19 +1,21 @@
+from time import sleep
+from threading import Thread
+from asyncio import run
 from loguru import logger
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from bot.database import clean_outdated_concerts
+from bot.parsing import create_concerts
 
 
-class Schedule:
+async def func() -> None:
+    logger.info('Schedule started')
+    hours = 8 * 60 * 60
+    while True:
+        sleep(hours)
+        await create_concerts()
+        clean_outdated_concerts()
 
-    def __init__(self, tasks: list):
-        self.scheduler = AsyncIOScheduler()
-        self.time = 60 * 8
-        self.add_tasks(tasks)
 
-    def add_tasks(self, tasks: list):
-        for task in tasks:
-            self.scheduler.add_job(task, 'interval', minutes=self.time)
-
-    def start(self):
-        self.scheduler.start()
-        logger.info('Schedule started')
+def start_schedule() -> None:
+    thread = Thread(target=run, args=(func(),))
+    thread.start()

@@ -1,12 +1,13 @@
+from time import perf_counter
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from bot.modules import Messages
 from bot.parsing import create_concerts
-from bot.database import clean_outdated_concerts, create_user
-from bot.database.city_list import add_user_city, get_all_city_of_user, get_city_by_name
+from bot.database import clean_outdated_concerts, create_user, add_user_city, get_all_city_of_user, get_city_by_name
 from bot.keyboards import get_main_keyboard, get_city_keyboard
+
 from .states import MenuStates
 
 
@@ -28,7 +29,7 @@ async def concerts(msg: Message, state: FSMContext) -> None:
 
 
 async def init_city_by_msg(msg: Message, state: FSMContext) -> None:
-    city = get_city_by_name(msg.text.lower().strip())
+    city = get_city_by_name(msg.text.strip())
     if city:
         add_user_city(msg.from_user.id, city.abb)
         await state.set_state(MenuStates.main_menu)
@@ -54,9 +55,13 @@ async def site(msg: Message, state: FSMContext) -> None:
 
 
 async def check(msg: Message) -> None:
+    if msg.from_user.id != 760643896:
+        return None
+    timer = perf_counter()
     clean_outdated_concerts()
     await create_concerts()
-    await msg.bot.send_message(msg.from_user.id, 'Checked')
+    elapsed = perf_counter() - timer
+    await msg.bot.send_message(msg.from_user.id, f'База данных обновлена.\nВыполнено за: {elapsed:.1f} сек.')
 
 
 def register_user_handlers(dp: Dispatcher) -> None:
