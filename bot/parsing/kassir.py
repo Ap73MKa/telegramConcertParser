@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 
 from bot.modules import Config
-from bot.database import get_all_city
+from bot.database import get_all_cities
 from .parser import Parser
 
 
@@ -21,7 +21,7 @@ class Kassir(Parser):
 
     def __init__(self):
         super().__init__()
-        self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_city()]
+        self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_cities()]
         self.params = {
             # 'category[]': [CategoryId.HUMOR,
             #                CategoryId.ELECTRONIC,
@@ -29,7 +29,7 @@ class Kassir(Parser):
             #                CategoryId.ROCK,
             #                CategoryId.POP],
             'sort': 0,
-            'c': 30
+            'c': 60
         }
 
     @staticmethod
@@ -47,10 +47,10 @@ class Kassir(Parser):
 
     @staticmethod
     def __reformat_price(price: str) -> int:
+        if not any(map(str.isdigit, price)):
+            return 0
         pos = price.find('—')
         price = price[:pos] if pos != -1 else price
-        if price == 'Бесплатно':
-            return 0
         return int(''.join(filter(str.isdigit, price)))
 
     @staticmethod
@@ -68,13 +68,15 @@ class Kassir(Parser):
         data_list = []
         for block in info_blocks:
             try:
-                data_list.append(self.__get_data_of_concert(block))
+                data = self.__get_data_of_concert(block)
+                if data['price'] >= 500:
+                    data_list.append(data)
             except Exception as e:
                 logger.exception(e)
         return data_list
 
     def fetch(self, page_data: str) -> list[dict[str]]:
         page_data = BeautifulSoup(page_data, 'lxml')
-        city = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
+        city_abb = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
-        return [dict(item, **{'city': city}) for item in self.__get_data_from_info_blocks(info_blocks)]
+        return [dict(item, **{'city': city_abb}) for item in self.__get_data_from_info_blocks(info_blocks)]

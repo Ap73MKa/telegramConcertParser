@@ -1,6 +1,6 @@
 from datetime import datetime
 from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField,\
-    SqliteDatabase
+    SqliteDatabase, CharField
 from bot.modules.config import Config
 
 
@@ -13,8 +13,8 @@ class BaseModel(Model):
 
 
 class City(BaseModel):
-    abb = TextField()
-    name = TextField()
+    abb = CharField(unique=True)
+    name = CharField(unique=True)
 
 
 class User(BaseModel):
@@ -24,11 +24,12 @@ class User(BaseModel):
 
 class Concert(BaseModel):
     id = PrimaryKeyField(null=False)
-    name = TextField()
+    name = CharField()
     date = DateField()
     price = IntegerField()
-    city = TextField()
-    url = TextField()
+    link = CharField(unique=True)
+    city = ForeignKeyField(City, backref='city')
+    add_time = DateTimeField(default=datetime.now)
 
 
 class UserCity(BaseModel):

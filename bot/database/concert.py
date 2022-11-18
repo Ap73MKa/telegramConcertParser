@@ -1,11 +1,12 @@
 from datetime import date
 
-from .models import Concert
+from .models import Concert, db
+from .city import get_city_by_abb
 
 
-def create_concert(name: str, start_date: date, price: int, city: str, url: str) -> None:
-    if not Concert.get_or_none(Concert.name == name):
-        Concert.create(name=name, date=start_date, price=price, city=city, url=url)
+def add_many_concerts(data: list[dict[str]]) -> None:
+    with db.atomic():
+        Concert.insert_many(data).on_conflict_ignore(True).execute()
 
 
 def get_concert_by_id(concert_id: int) -> Concert | None:
@@ -13,7 +14,7 @@ def get_concert_by_id(concert_id: int) -> Concert | None:
 
 
 def get_concerts_by_city(city_abb: str) -> list[Concert] | None:
-    return Concert.select().where(Concert.city == city_abb).order_by(Concert.date.desc())
+    return Concert.select().where(Concert.city == get_city_by_abb(city_abb)).order_by(Concert.date.desc())
 
 
 def delete_concert_by_id(concert_id: int) -> None:

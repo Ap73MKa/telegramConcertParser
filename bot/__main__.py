@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bot.handlers import register_user_handlers
 from bot.database import register_models
 from bot.modules import Config, set_language, ThrottlingMiddleware, PathManager, start_schedule
-from bot.parsing import update_cities
+from bot.parsing import update_list_of_available_cities
 
 
 async def on_start_up(dp: Dispatcher) -> None:
@@ -13,7 +13,7 @@ async def on_start_up(dp: Dispatcher) -> None:
     register_models()
     register_user_handlers(dp)
     set_language()
-    await update_cities()
+    await update_list_of_available_cities()
     start_schedule()
 
 
