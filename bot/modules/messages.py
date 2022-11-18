@@ -1,6 +1,7 @@
+from random import choices
 from abc import ABC
 
-from bot.database import get_concerts_by_city, get_all_cities, get_city_by_abb
+from bot.database import get_concerts_by_city, get_city_by_abb, get_all_cities_by_order
 from .config import Config
 
 
@@ -13,8 +14,9 @@ class Messages(ABC):
 
     @staticmethod
     def get_bot_info() -> str:
-        count = len(list(get_all_cities()))
-        cities = '\n'.join([f'• {city.name}' for city in get_all_cities()[:6]])
+        cities = get_all_cities_by_order()
+        count = len(cities)
+        cities = '\n'.join([f'• {city.name}' for city in choices(cities, k=6)])
         return f'<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов ' \
                f'России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны ' \
                f'города:\n{cities}\n И еще более {count - 6} городов!'
@@ -37,6 +39,11 @@ class Messages(ABC):
                                   f"<b><a href='{concert.link}'>{concert.name}</a></b>\n" for concert in concert_list])
         return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{get_city_by_abb(city_abb).name.upper()}</a>. ' \
                f'Список концертов\n\n\n{concert_list}'
+
+    @staticmethod
+    def get_all_cities_msg() -> str:
+        cities = '\n'.join([f'• {city.name}' for city in get_all_cities_by_order()])
+        return f'Список всех доступных городов\n\n{cities}'
 
     @staticmethod
     def get_welcome_msg(user_name: str = 'Пользователь') -> str:

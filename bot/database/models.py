@@ -1,7 +1,7 @@
 from datetime import datetime
-from peewee import Model, TextField, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField,\
-    SqliteDatabase, CharField
-from bot.modules.config import Config
+from peewee import Model, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField, SqliteDatabase,\
+    CharField
+from bot.modules import Config
 
 
 db = SqliteDatabase(Config.DATABASE)
@@ -13,13 +13,14 @@ class BaseModel(Model):
 
 
 class City(BaseModel):
-    abb = CharField(unique=True)
-    name = CharField(unique=True)
+    abb = CharField(unique=True, primary_key=True, max_length=32)
+    name = CharField(unique=True, max_length=16)
+    simple_name = CharField(unique=True)
 
 
 class User(BaseModel):
-    id = PrimaryKeyField(null=False)
-    user_id = IntegerField(unique=True)
+    user_id = IntegerField(unique=True, primary_key=True)
+    name = CharField()
 
 
 class Concert(BaseModel):

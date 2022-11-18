@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 class PathManager(ABC):
-    ROOT: Final = Path(__file__).resolve().parent.parent
+    ROOT: Final = Path(__file__).resolve().parent.parent.parent
 
     @classmethod
     def get(cls, path: str) -> Path:

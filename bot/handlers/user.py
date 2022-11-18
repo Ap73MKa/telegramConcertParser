@@ -1,9 +1,9 @@
 from time import perf_counter
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputFile
 
-from bot.modules import Messages
+from bot.modules import Messages, simplify_string, Config, PathManager
 from bot.parsing import create_concerts
 from bot.database import clean_outdated_concerts, create_user, add_user_city, get_all_city_of_user, get_city_by_name
 from bot.keyboards import get_main_keyboard, get_city_keyboard
@@ -13,7 +13,7 @@ from .states import MenuStates
 
 async def start(msg: Message, state: FSMContext) -> None:
     user_id = msg.from_user.id
-    create_user(user_id)
+    create_user(user_id, msg.from_user.full_name)
     add_user_city(user_id, 'msk')
     add_user_city(user_id, 'spb')
     await state.set_state(MenuStates.main_menu)
@@ -29,7 +29,7 @@ async def concerts(msg: Message, state: FSMContext) -> None:
 
 
 async def init_city_by_msg(msg: Message, state: FSMContext) -> None:
-    city = get_city_by_name(msg.text.strip())
+    city = get_city_by_name(simplify_string(msg.text))
     if city:
         add_user_city(msg.from_user.id, city.abb)
         await state.set_state(MenuStates.main_menu)
@@ -39,8 +39,9 @@ async def init_city_by_msg(msg: Message, state: FSMContext) -> None:
 
 
 async def info(msg: Message, state: FSMContext) -> None:
+    info_img = InputFile(PathManager.get('assets/info.png'))
+    await msg.bot.send_photo(msg.from_user.id, photo=info_img, caption=Messages.get_bot_info())
     await state.set_state(MenuStates.main_menu)
-    await msg.bot.send_message(msg.from_user.id, Messages.get_bot_info())
 
 
 async def city_concert(query: CallbackQuery, state: FSMContext) -> None:
@@ -54,8 +55,13 @@ async def site(msg: Message, state: FSMContext) -> None:
     await msg.bot.send_message(msg.from_user.id, Messages.get_site_info())
 
 
+async def cities(msg: Message, state: FSMContext) -> None:
+    await state.set_state(MenuStates.main_menu)
+    await msg.bot.send_message(msg.from_user.id, Messages.get_all_cities_msg())
+
+
 async def check(msg: Message) -> None:
-    if msg.from_user.id != 760643896:
+    if msg.from_user.id != int(Config.ADMIN_ID):
         return None
     timer = perf_counter()
     clean_outdated_concerts()
@@ -66,8 +72,12 @@ async def check(msg: Message) -> None:
 
 def register_user_handlers(dp: Dispatcher) -> None:
     # region message handlers
-    dp.register_message_handler(concerts, content_types=['text'], text='Узнать концерты 🔥', state=MenuStates.main_menu)
-    dp.register_message_handler(site, content_types=['text'], text='Узнать сайт 💬', state=MenuStates.main_menu)
+    dp.register_message_handler(concerts, content_types=['text'], text='Узнать концерты 🔥',
+                                state=MenuStates.main_menu)
+    dp.register_message_handler(cities, content_types=['text'], text='Вывести список городов 💥',
+                                state=MenuStates.main_menu)
+    dp.register_message_handler(site, content_types=['text'], text='Узнать сайт 💬',
+                                state=MenuStates.main_menu)
     dp.register_message_handler(check, commands='check', state=MenuStates.main_menu)
     dp.register_message_handler(start, commands='start', state='*')
     dp.register_message_handler(init_city_by_msg, state=MenuStates.choose_city)

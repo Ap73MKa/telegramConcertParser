@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 
 from .parser import Parser
+from bot.modules.simplify import simplify_string
 
 
 class CategoryId(NamedTuple):
@@ -27,7 +28,8 @@ class KassirCities(Parser):
 
     def __get_data_of_concert(self, info_block: BeautifulSoup) -> dict[str]:
         return {'abb': self.__get_city_from_url(info_block.get('href')),
-                'name': info_block.text.strip()}
+                'name': info_block.text.strip(),
+                'simple_name': simplify_string(info_block.text.strip())}
 
     def __get_data_from_info_blocks(self, info_blocks: list[BeautifulSoup]) -> list[dict[str]]:
         data_list = []

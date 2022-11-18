@@ -7,7 +7,7 @@ def create_city(abb: str, name: str) -> None:
         City.create(abb=abb, name=name)
 
 
-def add_many_cities(data: list[dict[str,str]]) -> None:
+def add_many_cities(data: list[dict[str, str]]) -> None:
     with db.atomic():
         City.insert_many(data).on_conflict_ignore(True).execute()
 
@@ -16,8 +16,12 @@ def get_all_cities() -> list[City] | None:
     return City.select()
 
 
+def get_all_cities_by_order() -> list[City] | None:
+    return City.select().order_by(City.name)
+
+
 def get_city_by_name(name: str) -> City | None:
-    return City.get_or_none(City.name == name)
+    return City.get_or_none(City.simple_name == name)
 
 
 def get_city_by_abb(abb: str) -> City | None:

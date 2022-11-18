@@ -22,6 +22,8 @@ class Kassir(Parser):
     def __init__(self):
         super().__init__()
         self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_cities()]
+        self.ban_words = ['оркестр', 'фестиваль', 'джаз', 'сертификат', 'ансамбль', 'абонемент', 'симфон', 'диско',
+                          'скрипка', 'орган', 'jazz', 'хор', 'театр', 'премия', 'радио', 'radio', 'фестиваля']
         self.params = {
             # 'category[]': [CategoryId.HUMOR,
             #                CategoryId.ELECTRONIC,
@@ -31,6 +33,12 @@ class Kassir(Parser):
             'sort': 0,
             'c': 60
         }
+
+    def is_good_name(self, name: str) -> bool:
+        for word in self.ban_words:
+            if word in name:
+                return False
+        return True
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
@@ -69,6 +77,8 @@ class Kassir(Parser):
         for block in info_blocks:
             try:
                 data = self.__get_data_of_concert(block)
+                if not self.is_good_name(data['name'].lower()):
+                    continue
                 if data['price'] >= 500:
                     data_list.append(data)
             except Exception as e:

@@ -1,7 +1,6 @@
 from abc import ABC
 from asyncio import gather
 from aiohttp import ClientSession
-from loguru import logger
 
 
 class Parser(ABC):
@@ -17,7 +16,7 @@ class Parser(ABC):
 
     async def get_page_data(self, session: ClientSession, url: str) -> list:
         async with session.get(url, params=self.params) as response:
-            logger.info(f'Parsing: {response.url}')
+            # logger.info(f'Parsing: {response.url}')
             return self.fetch(await response.text())
 
     async def get_data_from_all_urls(self) -> list:

@@ -25,6 +25,6 @@ def start_telegram_bot() -> None:
 
 
 if __name__ == '__main__':
-    log_path = PathManager.get('logs/{time}.log')
+    log_path = PathManager.get('bot/logs/{time}.log')
     logger.add(log_path, format="{time} {level} {message}", rotation="10:00", compression="zip", retention="3 days")
     start_telegram_bot()
