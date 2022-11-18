@@ -6,6 +6,7 @@ from loguru import logger
 
 from bot.modules import Config
 from bot.database import get_all_cities
+
 from .parser import Parser
 
 
