@@ -6,7 +6,7 @@ from aiogram.utils.exceptions import Throttled
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    def __init__(self, limit: float = 2.0, key_prefix: str = 'antiflood_'):
+    def __init__(self, limit: float = 0.5, key_prefix: str = 'antiflood_'):
         self.rate_limit = limit
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
