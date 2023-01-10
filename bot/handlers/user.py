@@ -8,7 +8,6 @@ from bot.parsing import create_concerts
 from bot.database import clean_outdated_concerts, create_user, add_user_city, get_all_city_of_user, get_city_by_name,\
     get_user_by_id
 from bot.keyboards import get_main_keyboard, get_city_keyboard, get_city_list_keyboard, get_home_keyboard
-
 from .states import MenuStates
 
 
