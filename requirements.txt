@@ -1,10 +1,10 @@
 # database and bot
-aiogram==2.23.1
+aiogram==2.24
 peewee~=3.15.4
 
-# parsing libs
+# parsing
 beautifulsoup4~=4.11.1
-lxml~=4.9.1
+lxml==4.9.2
 aiohttp~=3.8.1
 
 # utils

@@ -23,8 +23,6 @@ class Kassir(Parser):
     def __init__(self):
         super().__init__()
         self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_cities()]
-        self.ban_words = ['оркестр', 'фестиваль', 'джаз', 'сертификат', 'ансамбль', 'абонемент', 'симфон', 'диско',
-                          'скрипка', 'орган', 'jazz', 'хор', 'театр', 'премия', 'радио', 'radio', 'фестиваля']
         self.params = {
             # 'category[]': [CategoryId.HUMOR,
             #                CategoryId.ELECTRONIC,
@@ -35,8 +33,11 @@ class Kassir(Parser):
             'c': 60
         }
 
-    def is_good_name(self, name: str) -> bool:
-        for word in self.ban_words:
+    @staticmethod
+    def is_good_name(name: str) -> bool:
+        ban_words = ['оркестр', 'фестиваль', 'джаз', 'сертификат', 'ансамбль', 'абонемент', 'симфон', 'диско',
+                     'скрипка', 'орган', 'jazz', 'хор', 'театр', 'премия', 'радио', 'radio', 'фестиваля']
+        for word in ban_words:
             if word in name:
                 return False
         return True
@@ -78,10 +79,9 @@ class Kassir(Parser):
         for block in info_blocks:
             try:
                 data = self.__get_data_of_concert(block)
-                if not self.is_good_name(data['name'].lower()):
+                if not self.is_good_name(data['name'].lower()) or data['price'] < 500:
                     continue
-                if data['price'] >= 500:
-                    data_list.append(data)
+                data_list.append(data)
             except Exception as e:
                 logger.exception(e)
         return data_list
@@ -89,5 +89,5 @@ class Kassir(Parser):
     def fetch(self, page_data: str) -> list[dict[str]]:
         page_data = BeautifulSoup(page_data, 'lxml')
         city_abb = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
-        info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression'})
+        info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression js-ec-tile'})
         return [dict(item, **{'city': city_abb}) for item in self.__get_data_from_info_blocks(info_blocks)]
