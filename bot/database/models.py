@@ -21,6 +21,7 @@ class City(BaseModel):
 class User(BaseModel):
     user_id = IntegerField(unique=True, primary_key=True)
     name = CharField()
+    city_page = IntegerField(default=1)
 
 
 class Concert(BaseModel):

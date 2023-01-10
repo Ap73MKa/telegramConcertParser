@@ -41,10 +41,14 @@ class Messages(ABC):
                f'Список концертов\n\n\n{concert_list}'
 
     @staticmethod
-    def get_all_cities_msg() -> str:
-        cities = '\n'.join([f'• {city.name}' for city in get_all_cities_by_order()])
-        return f'Список всех доступных городов\n\n{cities}'
-
-    @staticmethod
     def get_welcome_msg(user_name: str = 'Пользователь') -> str:
         return f'Привет, {user_name}!\nДавай узнаем новые концерты'
+
+    @staticmethod
+    def get_random_msg() -> str:
+        messages = [
+            'Не пропустите ни одного концерта!🔥',
+            'Быстрый доступ ко всем концертам страны!',
+            'Вы никого не потеряли?'
+        ]
+        return choices(messages)[0]
