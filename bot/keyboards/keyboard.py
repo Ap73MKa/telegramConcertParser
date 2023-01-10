@@ -29,16 +29,14 @@ def get_home_keyboard() -> ReplyKeyboardMarkup:
     return kb
 
 
-def get_city_list_keyboard(user: User, page_count: int) -> ReplyKeyboardMarkup:
+def get_city_list_keyboard(user: User, direction: int) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     city_array = get_all_cities_by_order()
     page_available = ceil(len(city_array) / 9)
 
-    if page_count <= 0:
-        page_count = page_available
-
-    if page_count > page_available:
-        page_count %= page_available
+    page_count = user.city_page + direction
+    page_count = page_available if page_count <= 0\
+        else page_count % page_available if page_count > page_available else page_count
 
     user.city_page = page_count
     user.save()

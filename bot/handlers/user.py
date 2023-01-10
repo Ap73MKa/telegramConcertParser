@@ -15,17 +15,15 @@ from .states import MenuStates
 async def concert_menu(msg: Message, state: FSMContext) -> None:
     cities = [city.city.abb for city in get_all_city_of_user(msg.from_user.id)]
     await state.set_state(MenuStates.concert_menu)
-    await msg.bot.send_message(msg.from_user.id, text='Ваш список запросов:',
-                               reply_markup=get_home_keyboard())
+    await msg.bot.send_message(msg.from_user.id, text='Ваш список запросов:', reply_markup=get_home_keyboard())
     await msg.bot.send_message(msg.from_user.id, text=Messages.get_before_list_msg(),
                                reply_markup=get_city_keyboard(cities))
 
 
 async def city_menu(msg: Message, state: FSMContext) -> None:
-    user = get_user_by_id(msg.from_user.id)
     await state.set_state(MenuStates.city_menu)
-    await msg.bot.send_message(msg.from_user.id, text='Выберите город',
-                               reply_markup=get_city_list_keyboard(user, user.city_page))
+    await msg.bot.send_message(msg.from_user.id, text=Messages.get_random_msg(),
+                               reply_markup=get_city_list_keyboard(get_user_by_id(msg.from_user.id), 0))
 
 
 async def about(msg: Message, state: FSMContext) -> None:
@@ -34,45 +32,23 @@ async def about(msg: Message, state: FSMContext) -> None:
 
 
 async def handle_response_city(msg: Message, state: FSMContext) -> None:
-    user = get_user_by_id(msg.from_user.id)
-    if msg.text == '⬅️':
-        await msg.bot.send_message(msg.from_user.id, text='Выберите город',
-                                   reply_markup=get_city_list_keyboard(user, user.city_page - 1))
+    if await handle_home_request(msg, state) or await handle_city_check_request(msg):
         return
 
-    if msg.text == '➡️':
-        await msg.bot.send_message(msg.from_user.id, text='Выберите город',
-                                   reply_markup=get_city_list_keyboard(user, user.city_page + 1))
-        return
-
-    if 'Домой' in msg.text:
-        await state.set_state(MenuStates.main_menu)
-        await msg.bot.send_message(msg.from_user.id, text=Messages.get_random_msg(), reply_markup=get_main_keyboard())
-        return
-
-    city = get_city_by_name(simplify_string(msg.text))
-    if city:
-        add_user_city(msg.from_user.id, city.abb)
-        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
+    if msg.text == '⬅️' or msg.text == '➡️':
+        direction = -1 if msg.text == '⬅️' else 1
+        await msg.bot.send_message(msg.from_user.id, text=Messages.get_random_msg(),
+                                   reply_markup=get_city_list_keyboard(get_user_by_id(msg.from_user.id), direction))
         return
 
     await state.set_state(MenuStates.main_menu)
-    await msg.bot.send_message(msg.from_user.id, text='Ошибка ввода, возвращаю в главное меню',
-                               reply_markup=get_main_keyboard())
+    await msg.bot.send_message(msg.from_user.id, text=Messages.get_error_city(), reply_markup=get_main_keyboard())
 
 
 async def handle_response_concert(msg: Message, state: FSMContext) -> None:
-    if 'Домой' in msg.text:
-        await state.set_state(MenuStates.main_menu)
-        await msg.bot.send_message(msg.from_user.id, text=Messages.get_random_msg(), reply_markup=get_main_keyboard())
+    if await handle_home_request(msg, state) or await handle_city_check_request(msg):
         return
-
-    city = get_city_by_name(simplify_string(msg.text))
-    if city:
-        add_user_city(msg.from_user.id, city.abb)
-        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
-    else:
-        await msg.bot.send_message(msg.from_user.id, 'Пожалуйста, введите название города или выберите город из списка')
+    await msg.bot.send_message(msg.from_user.id, Messages.get_error_concert())
 
 
 async def handle_callback_concert(query: CallbackQuery, state: FSMContext) -> None:
@@ -86,8 +62,7 @@ async def update(msg: Message) -> None:
     timer = perf_counter()
     clean_outdated_concerts()
     await create_concerts()
-    elapsed = perf_counter() - timer
-    await msg.bot.send_message(msg.from_user.id, f'База данных обновлена.\nВыполнено за: {elapsed:.1f} сек.')
+    await msg.bot.send_message(msg.from_user.id, Messages.get_update_time(perf_counter() - timer))
 
 
 async def start(msg: Message, state: FSMContext) -> None:
@@ -104,6 +79,23 @@ async def welcome(msg: Message, state: FSMContext) -> None:
     info_img = InputFile(PathManager.get('assets/info.png'))
     await msg.bot.send_photo(msg.from_user.id, photo=info_img, caption=Messages.get_bot_info())
     await state.set_state(MenuStates.main_menu)
+
+
+async def handle_home_request(msg: Message, state: FSMContext) -> bool:
+    if 'Домой' in msg.text:
+        await state.set_state(MenuStates.main_menu)
+        await msg.bot.send_message(msg.from_user.id, text=Messages.get_random_msg(), reply_markup=get_main_keyboard())
+        return True
+    return False
+
+
+async def handle_city_check_request(msg: Message) -> bool:
+    city = get_city_by_name(simplify_string(msg.text))
+    if city:
+        add_user_city(msg.from_user.id, city.abb)
+        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
+        return True
+    return False
 
 
 def register_user_handlers(dp: Dispatcher) -> None:
