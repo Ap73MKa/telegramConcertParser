@@ -1,4 +1,5 @@
 from time import perf_counter
+from thefuzz.process import extractOne
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery, InputFile
@@ -6,7 +7,7 @@ from aiogram.types import Message, CallbackQuery, InputFile
 from bot.modules import Messages, simplify_string, Config, PathManager
 from bot.parsing import create_concerts
 from bot.database import clean_outdated_concerts, create_user, add_user_city, get_all_city_of_user, get_city_by_name,\
-    get_user_by_id
+    get_user_by_id, get_all_cities
 from bot.keyboards import get_main_keyboard, get_city_keyboard, get_city_list_keyboard, get_home_keyboard
 from .states import MenuStates
 
@@ -89,8 +90,10 @@ async def handle_home_request(msg: Message, state: FSMContext) -> bool:
 
 
 async def handle_city_check_request(msg: Message) -> bool:
-    city = get_city_by_name(simplify_string(msg.text))
-    if city:
+    all_city = [city.simple_name for city in get_all_cities()]
+    close = extractOne(simplify_string(msg.text), all_city)
+    if close[1] >= 80 and len(msg.text) > 2:
+        city = get_city_by_name(close[0])
         add_user_city(msg.from_user.id, city.abb)
         await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
         return True
