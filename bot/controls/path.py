@@ -3,7 +3,7 @@ from typing import Final
 from pathlib import Path
 
 
-class PathManager(ABC):
+class PathControl(ABC):
     ROOT: Final = Path(__file__).resolve().parent.parent.parent
 
     @classmethod

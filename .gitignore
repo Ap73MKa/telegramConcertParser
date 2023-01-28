@@ -161,6 +161,3 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 static/
-bot/database/FileDatabase/Database.db
-Database.db
-logs

@@ -1,7 +1,7 @@
-from random import choices
 from abc import ABC
+from random import choices
 
-from bot.database import get_concerts_by_city, get_city_by_abb, get_all_cities_by_order
+from bot.database import get_concerts_by_city_or_none, get_city_by_abb_or_none, get_all_cities_by_order_or_none
 from .config import Config
 
 
@@ -14,20 +14,20 @@ class Messages(ABC):
 
     @staticmethod
     def get_bot_info() -> str:
-        cities = get_all_cities_by_order()
+        cities = get_all_cities_by_order_or_none()
         count = len(cities)
         cities = '\n'.join([f'• {city.name}' for city in choices(cities, k=6)])
-        return f'<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов ' \
-               f'России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны ' \
+        return '<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов ' \
+               'России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны ' \
                f'города:\n{cities}\n И еще более {count - 6} городов!'
 
     @staticmethod
-    def get_before_list_msg() -> str:
+    def get_before_list() -> str:
         return 'Введите <b>название города</b> или выберите город из истории поиска:'
 
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
-        concert_list = get_concerts_by_city(city_abb)
+        concert_list = get_concerts_by_city_or_none(city_abb)
 
         if len(concert_list) > 20:
             concert_list = concert_list[len(concert_list) - 20:]
@@ -37,20 +37,21 @@ class Messages(ABC):
 
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
                                   f"<b><a href='{concert.link}'>{concert.name}</a></b>\n" for concert in concert_list])
-        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{get_city_by_abb(city_abb).name.upper()}</a>. ' \
+        city = get_city_by_abb_or_none(city_abb).name.upper()
+        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{city}</a>. ' \
                f'Список концертов\n\n\n{concert_list}'
 
     @staticmethod
-    def get_welcome_msg(user_name: str = 'Пользователь') -> str:
+    def get_welcome(user_name: str = 'Пользователь') -> str:
         return f'Привет, {user_name}!\nДавай узнаем новые концерты'
 
     @staticmethod
-    def get_random_msg() -> str:
-        messages = [
+    def get_random() -> str:
+        messages = (
             'Не пропустите ни одного концерта!🔥',
             'Быстрый доступ ко всем концертам страны!',
             '😎🤏\n😳🕶🤏',
-        ]
+        )
         return choices(messages)[0]
 
     @staticmethod
