@@ -1,8 +1,8 @@
 from loguru import logger
 
+from bot.database import get_city_by_abb_or_none, insert_many_concerts, insert_many_cities
 from .kassir import KassirParser
 from .kassir_cities import KassirCitiesParser
-from bot.database import get_city_by_abb_or_none, insert_many_concerts, insert_many_cities
 
 
 async def create_concerts() -> None:

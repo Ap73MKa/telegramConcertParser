@@ -2,8 +2,8 @@ from loguru import logger
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-from .parser import Parser
 from bot.misc.utils import simplify_string
+from .parser import Parser
 
 
 class KassirCitiesParser(Parser):

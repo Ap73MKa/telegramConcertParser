@@ -4,9 +4,9 @@ from loguru import logger
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-from .parser import Parser
 from bot.misc import Config
 from bot.database import get_all_cities_or_none
+from .parser import Parser
 
 
 class KassirParser(Parser):
