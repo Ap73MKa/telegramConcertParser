@@ -1,5 +1,4 @@
-from .models import City, UserCity, db
-from .user import get_user_by_id
+from .models import City, UserCity, User, db
 
 
 def create_city(abb: str, name: str) -> None:
@@ -28,17 +27,15 @@ def get_city_by_abb(abb: str) -> City | None:
     return City.get_or_none(City.abb == abb)
 
 
-def get_all_city_of_user(user_id: int) -> list[City] | None:
-    user = get_user_by_id(user_id)
+def get_all_city_of_user(user: User) -> list[City] | None:
     if user:
         return UserCity.select().where(UserCity.user == user).order_by(UserCity.date.desc())
     return None
 
 
-def add_user_city(user_id: int, city_abb: str) -> None:
+def add_user_city(user: User, city_abb: str) -> None:
     city = get_city_by_abb(city_abb)
-    user = get_user_by_id(user_id)
-    all_cities = get_all_city_of_user(user_id)
+    all_cities = get_all_city_of_user(user)
 
     if len(all_cities) >= 8:
         trash = all_cities[-1]

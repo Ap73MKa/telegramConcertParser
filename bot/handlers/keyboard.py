@@ -2,13 +2,15 @@ from math import ceil
 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.database.city import get_city_by_abb, get_all_cities_by_order
+from bot.database.city import get_city_by_abb, get_all_cities_by_order, get_all_city_of_user
 from bot.database.models import User
 
 
-def get_main_keyboard() -> ReplyKeyboardMarkup:
+def get_main_keyboard(user: User = None) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    last_city = get_city_by_abb(get_all_city_of_user(user)[0].city_id)
     kb.add(
+        KeyboardButton(text=f'Повторить запрос ({last_city.name}) ❤️‍🔥'),
         KeyboardButton(text='Предыдущие запросы 🔥'),
         KeyboardButton(text='Поиск концертов по городам 💥'),
         KeyboardButton(text='О телеграм боте 💬')
@@ -29,7 +31,7 @@ def get_home_keyboard() -> ReplyKeyboardMarkup:
     return kb
 
 
-def get_city_list_keyboard(user: User, direction: int) -> ReplyKeyboardMarkup:
+def get_city_list_keyboard(user: User, direction: int = 0) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     city_array = get_all_cities_by_order()
     page_available = ceil(len(city_array) / 9)
