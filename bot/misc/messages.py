@@ -37,7 +37,8 @@ class Messages(ABC):
 
         concert_list = '\n'.join([f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
                                   f"<b><a href='{concert.link}'>{concert.name}</a></b>\n" for concert in concert_list])
-        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{get_city_by_abb_or_none(city_abb).name.upper()}</a>. ' \
+        city = get_city_by_abb_or_none(city_abb).name.upper()
+        return f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{city}</a>. ' \
                f'Список концертов\n\n\n{concert_list}'
 
     @staticmethod

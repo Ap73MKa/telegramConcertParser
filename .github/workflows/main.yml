@@ -21,4 +21,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint
       - name: Pylint
-        run: pylint **/*.py --fail-under 8
+        run: pylint bot --fail-under 9

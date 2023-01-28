@@ -35,9 +35,9 @@ async def __handle_response_city(msg: Message, state: FSMContext) -> None:
     user_id = msg.from_user.id
     text = msg.text
     if text in ('⬅️', '➡️'):
-        dir = -1 if text == '⬅️' else 1
+        direction = -1 if text == '⬅️' else 1
         await msg.bot.send_message(user_id, text=Messages.get_random(),
-                                   reply_markup=MarkupKb.get_city_list(get_user_by_id_or_none(user_id), dir))
+                                   reply_markup=MarkupKb.get_city_list(get_user_by_id_or_none(user_id), direction))
         return
     if await _handle_home_request(msg, state) or await _handle_city_check_request(msg):
         return
