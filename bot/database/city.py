@@ -1,5 +1,4 @@
-from .models import City, UserCity, db
-from .user import get_user_by_id_or_none
+from .models import City, UserCity, db, User
 
 
 # region Sql create
@@ -10,8 +9,8 @@ def create_city(abb: str, name: str) -> None:
 
 
 def create_user_city(user: User, city_abb: str) -> None:
-    city = get_city_by_abb(city_abb)
-    all_cities = get_all_city_of_user(user)
+    city = get_city_by_abb_or_none(city_abb)
+    all_cities = get_all_city_of_user_or_none(user)
 
     if len(all_cities) >= 8:
         trash = all_cities[-1]

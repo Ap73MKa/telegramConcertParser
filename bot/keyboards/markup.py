@@ -4,7 +4,7 @@ from math import ceil
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from bot.database.models import User
-from bot.database import get_all_cities_by_order_or_none
+from bot.database import get_all_cities_by_order_or_none, get_city_by_abb_or_none, get_all_city_of_user_or_none
 
 
 class MarkupKb(ABC):
@@ -12,9 +12,11 @@ class MarkupKb(ABC):
         raise "I am a static! Dont touch me..."
 
     @staticmethod
-    def get_main() -> ReplyKeyboardMarkup:
+    def get_main(user: User) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        last_city = get_city_by_abb_or_none(get_all_city_of_user_or_none(user)[0].city_id)
         kb.add(
+            KeyboardButton(text=f'Повторить запрос ({last_city.name}) ❤️‍🔥'),
             KeyboardButton(text='Предыдущие запросы 🔥'),
             KeyboardButton(text='Поиск концертов по городам 💥'),
             KeyboardButton(text='О телеграм боте 💬')
@@ -28,7 +30,7 @@ class MarkupKb(ABC):
         return kb
 
     @staticmethod
-    def get_city_list(user: User, direction: int) -> ReplyKeyboardMarkup:
+    def get_city_list(user: User, direction: int = 0) -> ReplyKeyboardMarkup:
         # todo: Think about this shit!
         kb = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
         city_array = get_all_cities_by_order_or_none()

@@ -8,8 +8,8 @@ from bot.handlers import register_user_handlers
 from bot.parsing import update_list_of_available_cities
 
 from bot.misc import Config
-from bot.controls import PathControl, start_schedule
 from bot.middlewares import ThrottlingMiddleware
+from bot.controls import PathControl, start_schedule
 
 
 # region Private Functions

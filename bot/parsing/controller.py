@@ -16,10 +16,9 @@ async def create_concerts() -> None:
 
 
 async def update_list_of_available_cities() -> None:
-    cities = await KassirCities().get_data_from_all_urls()
+    cities = await KassirCitiesParser().get_data_from_all_urls()
     if not cities:
         logger.warning('No cities found')
         return
     insert_many_cities(cities)
     logger.info('Updating city list completed')
-
