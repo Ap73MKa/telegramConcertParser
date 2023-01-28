@@ -1,42 +1,32 @@
-from typing import NamedTuple
 from datetime import date, datetime
-from urllib.parse import urlparse
-from bs4 import BeautifulSoup
-from loguru import logger
 
-from bot.modules import Config
-from bot.database import get_all_cities
+from loguru import logger
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
 from .parser import Parser
+from bot.misc import Config
+from bot.database import get_all_cities_or_none
 
 
-class CategoryId(NamedTuple):
-    HUMOR = 4073
-    HIP_HOP = 3007
-    ELECTRONIC = 3008
-    ROCK = 3002
-    POP = 3003
+class KassirParser(Parser):
 
+    _PARAMS = {'sort': 0, 'c': 60}
 
-class Kassir(Parser):
+    # region Private Methods
 
     def __init__(self):
-        super().__init__()
-        self.urls = [f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_cities()]
-        self.params = {
-            # 'category[]': [CategoryId.HUMOR,
-            #                CategoryId.ELECTRONIC,
-            #                CategoryId.HIP_HOP,
-            #                CategoryId.ROCK,
-            #                CategoryId.POP],
-            'sort': 0,
-            'c': 60
-        }
+        self._URLS = (
+            f'https://{city.abb}.{Config.KASSIR_SITE}' for city in get_all_cities_or_none()
+        )
 
+    # region Static Methods
     @staticmethod
-    def is_good_name(name: str) -> bool:
-        ban_words = ['оркестр', 'фестиваль', 'джаз', 'сертификат', 'ансамбль', 'абонемент', 'симфон', 'диско',
-                     'скрипка', 'орган', 'jazz', 'хор', 'театр', 'премия', 'радио', 'radio', 'фестиваля']
+    def __is_good_name(name: str) -> bool:
+        ban_words = (
+            'оркестр', 'фестиваль', 'джаз', 'сертификат', 'ансамбль', 'абонемент', 'симфон', 'диско',
+            'скрипка', 'орган', 'jazz', 'хор', 'театр', 'премия', 'радио', 'radio', 'фестиваля'
+        )
         for word in ban_words:
             if word in name:
                 return False
@@ -68,26 +58,37 @@ class Kassir(Parser):
         url = urlparse(url).netloc
         return url[:url.find('.')]
 
+    # endregion
+
     def __get_data_of_concert(self, info_block: BeautifulSoup) -> dict[str]:
-        return {'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
-                'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
-                'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
-                'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')}
+        return {
+            'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
+            'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
+            'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
+            'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+        }
 
     def __get_data_from_info_blocks(self, info_blocks: list[BeautifulSoup]) -> list[dict[str]]:
         data_list = []
         for block in info_blocks:
             try:
                 data = self.__get_data_of_concert(block)
-                if not self.is_good_name(data['name'].lower()) or data['price'] < 500:
+                if not self.__is_good_name(data['name'].lower()) or data['price'] < 500:
                     continue
                 data_list.append(data)
             except Exception as e:
                 logger.exception(e)
         return data_list
 
+    # endregion
+
+    # region Public Methods
+
     def fetch(self, page_data: str) -> list[dict[str]]:
         page_data = BeautifulSoup(page_data, 'lxml')
         city_abb = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression js-ec-tile'})
         return [dict(item, **{'city': city_abb}) for item in self.__get_data_from_info_blocks(info_blocks)]
+
+    # endregion
+
