@@ -9,10 +9,9 @@ def create_city(abb: str, name: str) -> None:
         City.create(abb=abb, name=name)
 
 
-def create_user_city(user_id: int, city_abb: str) -> None:
-    city = get_city_by_abb_or_none(city_abb)
-    user = get_user_by_id_or_none(user_id)
-    all_cities = get_all_city_of_user_or_none(user_id)
+def create_user_city(user: User, city_abb: str) -> None:
+    city = get_city_by_abb(city_abb)
+    all_cities = get_all_city_of_user(user)
 
     if len(all_cities) >= 8:
         trash = all_cities[-1]
@@ -44,8 +43,7 @@ def get_all_cities_by_order_or_none() -> list[City] | None:
     return City.select().order_by(City.name)
 
 
-def get_all_city_of_user_or_none(user_id: int) -> list[City] | None:
-    user = get_user_by_id_or_none(user_id)
+def get_all_city_of_user_or_none(user: User) -> list[City] | None:
     if user:
         return UserCity.select().where(UserCity.user == user).order_by(UserCity.date.desc())
     return None

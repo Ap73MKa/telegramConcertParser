@@ -6,10 +6,10 @@ from urllib.parse import urlparse
 
 from bot.misc import Config
 from bot.database import get_all_cities_or_none
-from .parser import Parser
+from .parser import GroupParser
 
 
-class KassirParser(Parser):
+class KassirParser(GroupParser):
 
     _PARAMS = {'sort': 0, 'c': 60}
 
@@ -53,42 +53,30 @@ class KassirParser(Parser):
         price = price[:pos] if pos != -1 else price
         return int(''.join(filter(str.isdigit, price)))
 
-    @staticmethod
-    def __get_city_from_url(url: str) -> str:
-        url = urlparse(url).netloc
-        return url[:url.find('.')]
+    def is_good_data(self, data: dict) -> bool:
+        if data['price'] < 500:
+            return False
+        for word in self.ban_words:
+            if word in data['name']:
+                return False
+        return True
 
     # endregion
 
-    def __get_data_of_concert(self, info_block: BeautifulSoup) -> dict[str]:
+    def scrap_data_group(self, info_block: BeautifulSoup) -> dict[str]:
         return {
             'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
             'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
             'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
-            'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+            'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')}
         }
-
-    def __get_data_from_info_blocks(self, info_blocks: list[BeautifulSoup]) -> list[dict[str]]:
-        data_list = []
-        for block in info_blocks:
-            try:
-                data = self.__get_data_of_concert(block)
-                if not self.__is_good_name(data['name'].lower()) or data['price'] < 500:
-                    continue
-                data_list.append(data)
-            except Exception as e:
-                logger.exception(e)
-        return data_list
-
-    # endregion
-
-    # region Public Methods
 
     def fetch(self, page_data: str) -> list[dict[str]]:
         page_data = BeautifulSoup(page_data, 'lxml')
-        city_abb = self.__get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
+        city_abb = get_city_from_url(page_data.find('link', {'rel': 'canonical'}).get('href'))
         info_blocks = page_data.find_all('div', {'class': 'event-card js-ec-impression js-ec-tile'})
-        return [dict(item, **{'city': city_abb}) for item in self.__get_data_from_info_blocks(info_blocks)]
+        if not info_blocks:
+            logger.warning(f'No info from https://{city_abb}.{Config.KASSIR_SITE}')
+        return [dict(item, **{'city': city_abb}) for item in self.scrap_all_data(info_blocks)]
 
     # endregion
-
