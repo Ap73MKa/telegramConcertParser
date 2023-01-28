@@ -36,6 +36,7 @@ async def handle_response_main(msg: Message, state: FSMContext) -> None:
         await state.set_state(MenuStates.main_menu)
         await msg.bot.send_message(msg.from_user.id, Messages.get_site_info())
         return
+    
     await welcome(msg, state)
 
 
@@ -103,9 +104,10 @@ async def start(msg: Message, state: FSMContext) -> None:
 
 
 async def welcome(msg: Message, state: FSMContext) -> None:
-    photo_id = 'AgACAgIAAxkBAAIWQmPG9FOvgmmbXwmqWEEAAdME8Vn7RAACUMExG7WIOErEtGmDzExczgEAAwIAA3kAAy0E'
+    photo = 'https://sun1-87.userapi.com/impg/wEoV6bpiSXmT3uCKUaB7Cpmj2Nmym5l4hMKnLw/55rB5oNouD4.jpg?size=2000x793' \
+            '&quality=96&sign=7f6fe46af2cbdecd238dfa3d7c435248&type=album '
     await state.set_state(MenuStates.main_menu)
-    await msg.bot.send_photo(msg.from_user.id, photo=photo_id, caption=Messages.get_bot_info())
+    await msg.bot.send_photo(msg.from_user.id, photo=photo, caption=Messages.get_bot_info())
 
 
 def register_user_handlers(dp: Dispatcher) -> None:
