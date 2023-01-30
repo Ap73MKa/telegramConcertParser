@@ -1,12 +1,8 @@
 # telegramConcertParser
 
----
-
 This is a Telegram Bot written in Python for monitoring concerts. Based on [aiogram](https://github.com/aiogram/aiogram).
 
 ## Features
-
----
 
 - Search for concerts by entering the name of the city
 - Search for concerts by city selection via the keyboard
@@ -16,7 +12,6 @@ This is a Telegram Bot written in Python for monitoring concerts. Based on [aiog
 
 ## Usage
 
----
 ### 1. Install Requirements
 
 - Clone this repository<br>

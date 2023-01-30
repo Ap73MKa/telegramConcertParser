@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from bot.database import register_models
 from bot.handlers import register_user_handlers
-from bot.parsing import update_list_of_available_cities
+from bot.parsing import update_list_of_available_cities, create_concerts
 
 from bot.misc import Config
 from bot.middlewares import ThrottlingMiddleware
@@ -20,6 +20,7 @@ async def __on_start_up(dp: Dispatcher) -> None:
     register_user_handlers(dp)
     setlocale(LC_ALL, ('ru_RU', 'UTF-8'))
     await update_list_of_available_cities()
+    await create_concerts()
     start_schedule()
 
 
