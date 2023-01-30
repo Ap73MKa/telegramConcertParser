@@ -1,5 +1,10 @@
 # telegramConcertParser
 
+![](https://badgen.net/github/checks/ap73mka/telegramConcertParser)
+![](https://badgen.net/github/release/ap73mka/telegramConcertParser)
+![](https://badgen.net/badge/Licence/MIT/blue)
+![](https://badgen.net/badge/Python/3.10/blue?icon=pypi)
+
 This is a Telegram Bot written in Python for monitoring concerts. Based on [aiogram](https://github.com/aiogram/aiogram).
 
 ## Features
@@ -16,15 +21,15 @@ This is a Telegram Bot written in Python for monitoring concerts. Based on [aiog
 
 - Clone this repository<br>
 
-`
+```
 git clone https://github.com/Ap73MKa/telegramConcertParser
-`
+```
 
 - Install requirements
 
-`
+```
 pip install -r requirements.txt
-`
+```
 
 ### 2. Setup environment variables
 
