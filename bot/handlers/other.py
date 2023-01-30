@@ -29,12 +29,11 @@ async def _handle_home_request(msg: Message, state: FSMContext) -> bool:
 async def _handle_city_check_request(msg: Message) -> bool:
     if len(msg.text) <= 2:
         return False
-    all_city = [city.simple_name for city in get_all_cities_or_none()]
-    close = extractOne(simplify_string(msg.text), all_city)
+    close = extractOne(simplify_string(msg.text), [city.simple_name for city in get_all_cities_or_none()])
     if close[1] >= 80:
-        city = get_city_by_name_or_none(close[0])
-        create_user_city(msg.from_user.id, city.abb)
-        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city.abb))
+        city_abb = get_city_by_name_or_none(close[0]).abb
+        create_user_city(msg.from_user.id, city_abb)
+        await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city_abb))
         return True
     return False
 

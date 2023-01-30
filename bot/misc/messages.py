@@ -46,6 +46,11 @@ class Messages(ABC):
         return f'Привет, {user_name}!\nДавай узнаем новые концерты'
 
     @staticmethod
+    def get_welcome_photo():
+        return 'https://sun1-87.userapi.com/impg/wEoV6bpiSXmT3uCKUaB7Cpmj2Nmym5l4hMKnLw/55rB5oNouD4.jpg?size=2000x793' \
+               '&quality=96&sign=7f6fe46af2cbdecd238dfa3d7c435248&type=album '
+
+    @staticmethod
     def get_random() -> str:
         messages = (
             'Не пропустите ни одного концерта!🔥',

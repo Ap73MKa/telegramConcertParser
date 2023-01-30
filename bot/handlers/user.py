@@ -11,10 +11,10 @@ from bot.database import create_user_city, get_user_by_id_or_none, delete_outdat
     create_user, get_all_city_of_user_or_none
 from .other import _handle_home_request, _handle_city_check_request, _MenuStates
 
+
 # region Private Functions
 
 # region Handles
-
 async def __handle_response_main(msg: Message, state: FSMContext) -> None:
     if 'повторить запрос' in msg.text.lower():
         city_abb = get_all_city_of_user_or_none(get_user_by_id_or_none(msg.from_user.id))[0].city_id
@@ -91,9 +91,7 @@ async def __update(msg: Message) -> None:
 
 
 async def __welcome(msg: Message, state: FSMContext) -> None:
-    photo = 'https://sun1-87.userapi.com/impg/wEoV6bpiSXmT3uCKUaB7Cpmj2Nmym5l4hMKnLw/55rB5oNouD4.jpg?' \
-            'size=2000x793&quality=96&sign=7f6fe46af2cbdecd238dfa3d7c435248&type=album'
-    await msg.bot.send_photo(msg.from_user.id, photo=photo, caption=Messages.get_bot_info())
+    await msg.bot.send_photo(msg.from_user.id, photo=Messages.get_welcome_photo(), caption=Messages.get_bot_info())
     await state.set_state(_MenuStates.MAIN)
 
 
