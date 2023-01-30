@@ -50,8 +50,8 @@ class GroupParser(Parser, ABC):
     def _scrap_data_group(self, group: BeautifulSoup) -> dict:
         pass
 
-    @staticmethod
-    def _is_good_data(data: dict) -> bool:
+    @abstractmethod
+    def _is_good_data(self, data: dict) -> bool:
         return True
 
     def _scrap_all_data(self, data_groups: list[BeautifulSoup]) -> list[dict[str]]:

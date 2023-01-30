@@ -55,12 +55,12 @@ class KassirParser(GroupParser):
                 return False
         return True
 
-    def _scrap_data_group(self, info_block: BeautifulSoup) -> dict[str]:
+    def _scrap_data_group(self, group: BeautifulSoup) -> dict[str]:
         return {
-            'name': info_block.find('div', attrs={'class': 'title'}).text.strip(),
-            'date': self.__reformat_date(info_block.find('time', attrs={'class': 'date date--md'}).text.strip()),
-            'price': self.__reformat_price(info_block.find('div', attrs={'class': 'cost rub'}).text.strip()),
-            'link': info_block.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
+            'name': group.find('div', attrs={'class': 'title'}).text.strip(),
+            'date': self.__reformat_date(group.find('time', attrs={'class': 'date date--md'}).text.strip()),
+            'price': self.__reformat_price(group.find('div', attrs={'class': 'cost rub'}).text.strip()),
+            'link': group.find('a', attrs={'class': 'image js-ec-click-product'}).get('href')
         }
 
     def _fetch(self, page_data: str) -> list[dict[str]]:

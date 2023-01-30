@@ -7,6 +7,9 @@ from .parser import GroupParser
 class KassirCitiesParser(GroupParser):
     _URLS = ('https://kassir.ru',)
 
+    def _is_good_data(self, data: dict) -> bool:
+        return True
+
     def _scrap_data_group(self, group: BeautifulSoup) -> dict:
         return {
             'abb': get_city_from_url(group.get('href')),

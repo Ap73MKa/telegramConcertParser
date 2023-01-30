@@ -19,14 +19,19 @@ def get_concerts_by_city_or_none(city_abb: str) -> list[Concert] | None:
 # region Sql delete
 
 def delete_concert_by_id(concert_id: int) -> None:
-    query = get_concert_by_id_or_none(concert_id)
-    if query:
+    # query = get_concert_by_id_or_none(concert_id)
+    # if query:
+    #     query.delete_instance()
+    if query := get_concert_by_id_or_none(concert_id):
         query.delete_instance()
 
 
 def delete_outdated_concerts() -> None:
-    concert_list = Concert.select().where(Concert.date < date.today())
-    if concert_list:
+    # concert_list = Concert.select().where(Concert.date < date.today())
+    # if concert_list:
+    #     for concert in concert_list:
+    #         delete_concert_by_id(concert.id)
+    if concert_list := Concert.select().where(Concert.date < date.today()):
         for concert in concert_list:
             delete_concert_by_id(concert.id)
 
