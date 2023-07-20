@@ -1,9 +1,27 @@
 from os import environ
-from typing import Final
 
 
 class Config:
-    TOKEN: Final = environ.get("TOKEN", "define me")
-    ADMIN_ID = environ.get("ADMIN_ID", "define me")
-    KASSIR_SITE = "kassir.ru/bilety-na-koncert?"
-    DATABASE = "database.db"
+    TOKEN: str = environ.get("TOKEN", "define me")
+    ADMIN_ID: int = environ.get("ADMIN_ID", 0)
+    KASSIR_SITE: str = "kassir.ru/bilety-na-koncert?"
+    DATABASE: str = "database.db"
+    BAN_WORDS: list[str] = [
+        "оркестр",
+        "фестиваль",
+        "джаз",
+        "сертификат",
+        "ансамбль",
+        "абонемент",
+        "симфон",
+        "диско",
+        "скрипка",
+        "орган",
+        "jazz",
+        "хор",
+        "театр",
+        "премия",
+        "радио",
+        "radio",
+        "фестиваля",
+    ]

@@ -11,11 +11,11 @@ def add_many_cities(data: list[dict[str, str]]) -> None:
         City.insert_many(data).on_conflict_ignore(True).execute()
 
 
-def get_all_cities() -> list[City] | None:
+def get_all_cities() -> list[City]:
     return City.select()
 
 
-def get_all_cities_by_order() -> list[City] | None:
+def get_all_cities_by_order() -> list[City]:
     return City.select().order_by(City.name)
 
 

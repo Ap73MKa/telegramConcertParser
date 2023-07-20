@@ -15,6 +15,9 @@ from bot.database.city import (
 from bot.database.models import User
 
 
+CITIES_PER_PAGE = 9
+
+
 def get_main_keyboard(user: User = None) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     last_city = get_city_by_abb(get_all_city_of_user(user)[0].city_id)
@@ -44,39 +47,33 @@ def get_home_keyboard() -> ReplyKeyboardMarkup:
     return kb
 
 
+def __update_current_page(user: User, direction: int, num_pages: int) -> int:
+    current_page = user.city_page + direction
+    current_page = max(1, min(current_page, num_pages))
+    user.city_page = current_page
+    user.save()
+    return current_page
+
+
 def get_city_list_keyboard(user: User, direction: int = 0) -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
-    city_array = get_all_cities_by_order()
-    page_available = ceil(len(city_array) / 9)
+    city_list = get_all_cities_by_order()
+    num_pages = ceil(len(city_list) / CITIES_PER_PAGE)
+    current_page = __update_current_page(user, direction, num_pages)
+    start_page = (current_page - 1) * CITIES_PER_PAGE
+    cities = [
+        city.name for city in city_list[start_page : start_page + CITIES_PER_PAGE]
+    ]
+    buttons = [KeyboardButton(text=city) for city in cities] + [
+        KeyboardButton(text="❌")
+    ] * (CITIES_PER_PAGE - len(cities))
 
-    page_count = user.city_page + direction
-    page_count = (
-        page_available
-        if page_count <= 0
-        else page_count % page_available
-        if page_count > page_available
-        else page_count
-    )
-
-    user.city_page = page_count
-    user.save()
-
-    start_page = (page_count - 1) * 9
-    cities = [city.name for city in city_array[start_page : start_page + 9]]
-
-    for i in range(9 - len(cities)):
-        cities.append("❌")
-
-    for i in range(3):
-        kb.add(
-            KeyboardButton(text=cities[i * 3]),
-            KeyboardButton(text=cities[i * 3 + 1]),
-            KeyboardButton(text=cities[i * 3 + 2]),
-        )
+    for i in range(0, len(buttons), 3):
+        kb.add(*buttons[i : i + 3])
 
     kb.add(
         KeyboardButton(text="⬅️"),
-        KeyboardButton(text=f"{page_count}/{page_available}\nДомой 🏚"),
+        KeyboardButton(text=f"{current_page}/{num_pages}\nДомой 🏚"),
         KeyboardButton(text="➡️"),
     )
 

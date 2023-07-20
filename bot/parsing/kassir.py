@@ -5,8 +5,8 @@ from loguru import logger
 
 from bot.modules import Config
 from bot.database import get_all_cities
-from .parser import GroupParser
 from bot.modules.simplify import get_city_from_url
+from .parser import GroupParser
 
 
 class Kassir(GroupParser):
@@ -16,25 +16,7 @@ class Kassir(GroupParser):
             f"https://{city.abb}.{Config.KASSIR_SITE}" for city in get_all_cities()
         ]
         self.params = {"sort": 0, "c": 60}
-        self.ban_words = [
-            "оркестр",
-            "фестиваль",
-            "джаз",
-            "сертификат",
-            "ансамбль",
-            "абонемент",
-            "симфон",
-            "диско",
-            "скрипка",
-            "орган",
-            "jazz",
-            "хор",
-            "театр",
-            "премия",
-            "радио",
-            "radio",
-            "фестиваля",
-        ]
+        self.ban_words = Config.BAN_WORDS
 
     @staticmethod
     def __reformat_date(concert_date: str) -> date:
@@ -54,22 +36,22 @@ class Kassir(GroupParser):
                 return False
         return True
 
-    def scrap_data_group(self, info_block: BeautifulSoup) -> dict[str]:
+    def scrap_data_group(self, data_groups: BeautifulSoup) -> dict[str]:
         return {
-            "name": info_block.find(
+            "name": data_groups.find(
                 "div", {"class": "compilation-tile__title"}
             ).text.strip(),
             "date": self.__reformat_date(
-                info_block.find("time", {"class": "compilation-tile__date"}).get(
+                data_groups.find("time", {"class": "compilation-tile__date"}).get(
                     "datetime"
                 )
             ),
             "price": self.__reformat_price(
-                info_block.find("li", {"class": "compilation-tile__price-block"})
+                data_groups.find("li", {"class": "compilation-tile__price-block"})
                 .find("span", {"class": "text-[0.65rem]"})
                 .text.strip()
             ),
-            "link": info_block.find("a", {"class": "compilation-tile__img-block"}).get(
+            "link": data_groups.find("a", {"class": "compilation-tile__img-block"}).get(
                 "href"
             ),
         }

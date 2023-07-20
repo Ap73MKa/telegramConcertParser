@@ -19,8 +19,12 @@ class Parser(ABC):
         pass
 
     async def get_page_data(self, session: ClientSession, url: str) -> list:
-        async with session.get(url, params=self.params) as response:
-            return self.fetch(await response.text())
+        try:
+            async with session.get(url, params=self.params) as response:
+                return self.fetch(await response.text())
+        except Exception as e:
+            logger.exception(f"An error occurred while fetching data from {url}: {e}")
+            return []
 
     async def get_data_from_all_urls(self) -> list:
         async with ClientSession(headers=self.header) as session:
