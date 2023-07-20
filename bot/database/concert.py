@@ -11,7 +11,7 @@ def get_concert_by_id_or_none(concert_id: int) -> Concert | None:
     return Concert.get_or_none(Concert.id == concert_id)
 
 
-def get_concerts_by_city_or_none(city_abb: str) -> list[Concert] | None:
+def get_concerts_by_city(city_abb: str) -> list[Concert]:
     return (
         Concert.select()
         .where(Concert.city == get_city_by_abb_or_none(city_abb))
@@ -30,9 +30,9 @@ def delete_concert_by_id(concert_id: int) -> None:
 
 
 def delete_outdated_concerts() -> None:
-    if concert_list := Concert.select().where(Concert.date < date.today()):
-        for concert in concert_list:
-            delete_concert_by_id(concert.id)
+    concert_list: list[Concert] = Concert.select().where(Concert.date < date.today())
+    for concert in concert_list:
+        delete_concert_by_id(concert.id)
 
 
 # endregion

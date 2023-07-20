@@ -7,7 +7,7 @@ from .parser import GroupParser
 class KassirCitiesParser(GroupParser):
     _URLS = ("https://kassir.ru",)
 
-    def _is_good_data(self, data: dict) -> bool:
+    def _is_valid_data(self, data: dict) -> bool:
         return True
 
     def _scrap_data_group(self, group: BeautifulSoup) -> dict:
@@ -17,7 +17,7 @@ class KassirCitiesParser(GroupParser):
             "simple_name": simplify_string(group.text.strip()),
         }
 
-    def _fetch(self, page_data: str) -> list[dict[str]]:
+    def _parse_page_data(self, page_data: str) -> list[dict[str]]:
         data_groups = BeautifulSoup(page_data, "lxml").find(
             "div", attrs={"class": "city-container-wrapper"}
         )

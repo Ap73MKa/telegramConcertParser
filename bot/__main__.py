@@ -31,7 +31,7 @@ def __start_telegram_bot() -> None:
 
 def __main() -> None:
     if Config.DEBUG:
-        log_path = PathControl.get("bot/logs/{time}.log")
+        log_path = PathControl.get("logs/{time}.log")
         logger.add(
             log_path,
             format="{time} {level} {message}",

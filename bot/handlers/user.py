@@ -12,7 +12,7 @@ from bot.database import (
     get_user_by_id_or_none,
     delete_outdated_concerts,
     create_user,
-    get_all_city_of_user_or_none,
+    get_all_city_of_user,
 )
 from .other import _handle_home_request, _handle_city_check_request, _MenuStates
 from ..controls import PathControl
@@ -24,9 +24,9 @@ from ..controls import PathControl
 # region Handles
 async def __handle_response_main(msg: Message, state: FSMContext) -> None:
     if "повторить запрос" in msg.text.lower():
-        city_abb = get_all_city_of_user_or_none(
-            get_user_by_id_or_none(msg.from_user.id)
-        )[0].city_id
+        city_abb = get_all_city_of_user(get_user_by_id_or_none(msg.from_user.id))[
+            0
+        ].city_id
         await msg.bot.send_message(
             msg.from_user.id, Messages.get_concert_list(city_abb)
         )
@@ -35,9 +35,7 @@ async def __handle_response_main(msg: Message, state: FSMContext) -> None:
     if "предыдущие запросы" in msg.text.lower():
         cities = [
             city.city.abb
-            for city in get_all_city_of_user_or_none(
-                get_user_by_id_or_none(msg.from_user.id)
-            )
+            for city in get_all_city_of_user(get_user_by_id_or_none(msg.from_user.id))
         ]
         await state.set_state(_MenuStates.CONCERT)
         await msg.bot.send_message(

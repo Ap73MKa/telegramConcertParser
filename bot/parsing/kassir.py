@@ -5,7 +5,7 @@ from loguru import logger
 from bs4 import BeautifulSoup
 
 from bot.misc import Config, get_city_from_url
-from bot.database import get_all_cities_or_none
+from bot.database import get_all_cities
 from .parser import GroupParser
 
 
@@ -14,8 +14,7 @@ class KassirParser(GroupParser):
 
     def __init__(self):
         self._URLS = (
-            f"https://{city.abb}.{Config.KASSIR_SITE}"
-            for city in get_all_cities_or_none()
+            f"https://{city.abb}.{Config.KASSIR_SITE}" for city in get_all_cities()
         )
         self.ban_words = [
             "оркестр",
@@ -49,9 +48,24 @@ class KassirParser(GroupParser):
     def __reformat_price(price: str) -> int:
         return int(re.sub(r"\D", "", price))
 
+    @staticmethod
+    def __get_abb_from_url(page: BeautifulSoup) -> str | None:
+        if not (meta_data := page.find("meta", {"property": "og:url"})):
+            return None
+        url = meta_data.get("content")
+        return get_city_from_url(url)
+
+    @staticmethod
+    def __prepare_data(scraped_data: list[dict], city_abb: str):
+        scraped_data = [
+            {**item, "link": f"https://{city_abb}.kassir.ru" + item["link"]}
+            for item in scraped_data
+        ]
+        return [dict(item, **{"city": city_abb}) for item in scraped_data]
+
     # endregion
 
-    def _is_good_data(self, data: dict) -> bool:
+    def _is_valid_data(self, data: dict) -> bool:
         if not all(data[key] for key in data.keys()):
             return False
         if data["price"] < 500:
@@ -61,7 +75,7 @@ class KassirParser(GroupParser):
                 return False
         return True
 
-    def _scrap_data_group(self, group: BeautifulSoup) -> dict[str]:
+    def _scrap_data_group(self, group: BeautifulSoup) -> dict:
         return {
             "name": group.find(
                 "div", {"class": "compilation-tile__title"}
@@ -79,24 +93,16 @@ class KassirParser(GroupParser):
             ),
         }
 
-    def _fetch(self, page_data: str) -> list[dict[str]]:
+    def _parse_page_data(self, page_data: str) -> list[dict]:
         page_data = BeautifulSoup(page_data, "lxml")
-        meta_data = page_data.find("meta", {"property": "og:url"})
-        if not meta_data:
+        if not (city_abb := self.__get_abb_from_url(page_data)):
             return []
-        url = meta_data.get("content")
-        city_abb = get_city_from_url(url)
         info_blocks = page_data.find_all(
             "article", {"class": "recommendation-item compilation-tile"}
         )
         if not info_blocks:
-            logger.warning(f"No info from {url}")
+            logger.warning(f"No info from https://{city_abb}.{Config.KASSIR_SITE}")
             return []
-        scraped_data = self._scrap_all_data(info_blocks)
-        scraped_data = [
-            {**item, "link": f"https://{city_abb}.kassir.ru" + item["link"]}
-            for item in scraped_data
-        ]
-        return [dict(item, **{"city": city_abb}) for item in scraped_data]
+        return self.__prepare_data(self._scrap_all_data(info_blocks), city_abb)
 
     # endregion

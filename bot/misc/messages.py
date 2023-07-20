@@ -2,9 +2,9 @@ from abc import ABC
 from random import choices
 
 from bot.database import (
-    get_concerts_by_city_or_none,
+    get_concerts_by_city,
     get_city_by_abb_or_none,
-    get_all_cities_by_order_or_none,
+    get_all_cities_by_order,
 )
 from bot.misc.config import Config
 
@@ -19,7 +19,7 @@ class Messages(ABC):
 
     @staticmethod
     def get_bot_info() -> str:
-        cities = get_all_cities_by_order_or_none()
+        cities = get_all_cities_by_order()
         count = len(cities)
         cities = "\n".join([f"• {city.name}" for city in choices(cities, k=6)])
         return (
@@ -34,7 +34,7 @@ class Messages(ABC):
 
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
-        concert_list = get_concerts_by_city_or_none(city_abb)
+        concert_list = get_concerts_by_city(city_abb)
 
         if len(concert_list) > 20:
             concert_list = concert_list[len(concert_list) - 20 :]

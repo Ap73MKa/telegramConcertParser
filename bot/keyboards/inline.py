@@ -7,7 +7,7 @@ from bot.database import get_city_by_abb_or_none
 
 class InlineKb(ABC):
     def __new__(cls, *args, **kwargs):
-        raise "I am a static! Dont touch me..."
+        raise Exception("I am a static! Dont touch me...")
 
     @staticmethod
     def get_city(city_abb_list: list[str]) -> InlineKeyboardMarkup:

@@ -17,13 +17,13 @@ class Parser(ABC):
 
     # region Private Methods
     @abstractmethod
-    def _fetch(self, page_data: str) -> list:
+    def _parse_page_data(self, page_data: str) -> list:
         pass
 
-    async def __get_page_data(self, session: ClientSession, url: str) -> list:
+    async def __fetch_page_data(self, session: ClientSession, url: str) -> list:
         try:
             async with session.get(url, params=self._PARAMS) as response:
-                return self._fetch(await response.text())
+                return self._parse_page_data(await response.text())
         except Exception as e:
             logger.exception(f"An error occurred while fetching data from {url}: {e}")
             return []
@@ -35,7 +35,7 @@ class Parser(ABC):
         async with ClientSession(headers=self._HEADER) as session:
             return sum(
                 await gather(
-                    *[self.__get_page_data(session, url) for url in self._URLS]
+                    *[self.__fetch_page_data(session, url) for url in self._URLS]
                 ),
                 [],
             )
@@ -48,7 +48,7 @@ class GroupParser(Parser, ABC):
     def __filter_data(self, data: BeautifulSoup) -> dict | None:
         try:
             data = self._scrap_data_group(data)
-            if self._is_good_data(data):
+            if self._is_valid_data(data):
                 return data
         except Exception as e:
             logger.exception(e)
@@ -59,7 +59,7 @@ class GroupParser(Parser, ABC):
         pass
 
     @abstractmethod
-    def _is_good_data(self, data: dict) -> bool:
+    def _is_valid_data(self, data: dict) -> bool:
         return True
 
     def _scrap_all_data(self, data_groups: list[BeautifulSoup]) -> list[dict[str]]:

@@ -19,6 +19,7 @@ class ThrottlingMiddleware(BaseMiddleware):
     ) -> None:
         await self._throttle(query.message, data)
 
+    # pylint: disable=W0613
     async def _throttle(self, message: Message, data: dict[str]) -> None:
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()

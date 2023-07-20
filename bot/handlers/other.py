@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from bot.keyboards import MarkupKb
 from bot.misc import Messages, simplify_string
 from bot.database import (
-    get_all_cities_or_none,
+    get_all_cities,
     get_city_by_name_or_none,
     create_user_city,
     get_user_by_id_or_none,
@@ -39,7 +39,7 @@ async def _handle_city_check_request(msg: Message) -> bool:
         return False
     close = extractOne(
         simplify_string(msg.text),
-        [city.simple_name for city in get_all_cities_or_none()],
+        [city.simple_name for city in get_all_cities()],
     )
     if close[1] >= 80:
         city_abb = get_city_by_name_or_none(close[0]).abb
