@@ -1,9 +1,17 @@
 from datetime import datetime
-from peewee import Model, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField, SqliteDatabase,\
-    CharField
+from peewee import (
+    Model,
+    DateField,
+    IntegerField,
+    PrimaryKeyField,
+    ForeignKeyField,
+    DateTimeField,
+    SqliteDatabase,
+    CharField,
+)
 
 
-db = SqliteDatabase('database.db')
+db = SqliteDatabase("database.db")
 
 
 class _BaseModel(Model):
@@ -29,14 +37,14 @@ class Concert(_BaseModel):
     date = DateField()
     price = IntegerField()
     link = CharField(unique=True)
-    city = ForeignKeyField(City, backref='city')
+    city = ForeignKeyField(City, backref="city")
     add_time = DateTimeField(default=datetime.now)
 
 
 class UserCity(_BaseModel):
     id = PrimaryKeyField(null=False)
-    user = ForeignKeyField(User, backref='user')
-    city = ForeignKeyField(City, backref='city')
+    user = ForeignKeyField(User, backref="user")
+    city = ForeignKeyField(City, backref="city")
     date = DateTimeField(default=datetime.now)
 
 

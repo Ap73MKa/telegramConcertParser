@@ -9,7 +9,7 @@ class ThrottlingMiddleware(BaseMiddleware):
     def __init__(self, limit: float = 0.5, key_prefix: str = "antiflood_"):
         self.rate_limit = limit
         self.prefix = key_prefix
-        super(ThrottlingMiddleware, self).__init__()
+        super().__init__()
 
     async def on_process_message(self, message: Message, data: dict[str]) -> None:
         await self._throttle(message, data)

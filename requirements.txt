@@ -1,12 +1,13 @@
 # database and bot
-aiogram==2.24
-peewee==3.15.4
+aiogram==2.25.1
+peewee==3.16.2
 
 # parsing
-lxml==4.9.2
-aiohttp~=3.8.1
-beautifulsoup4==4.11.1
+lxml==4.9.3
+aiohttp==3.8.5
+beautifulsoup4==4.12.2
 
 # utils
-loguru==0.6.0
+loguru==0.7.0
 thefuzz[speedup]==0.19.0
+black==23.7.0

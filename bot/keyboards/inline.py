@@ -13,5 +13,9 @@ class InlineKb(ABC):
     def get_city(city_abb_list: list[str]) -> InlineKeyboardMarkup:
         kb = InlineKeyboardMarkup(row_width=1)
         for abb in city_abb_list:
-            kb.add(InlineKeyboardButton(text=get_city_by_abb_or_none(abb).name, callback_data=f'city-{abb}'))
+            kb.add(
+                InlineKeyboardButton(
+                    text=get_city_by_abb_or_none(abb).name, callback_data=f"city-{abb}"
+                )
+            )
         return kb
