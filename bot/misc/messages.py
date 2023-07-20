@@ -32,18 +32,15 @@ class Messages(ABC):
     def get_before_list() -> str:
         return "Введите <b>название города</b> или выберите город из истории поиска:"
 
+
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
         concert_list = get_concerts_by_city(city_abb)
-
-        if len(concert_list) > 20:
-            concert_list = concert_list[len(concert_list) - 20 :]
-
+        concert_list = concert_list[len(concert_list) - 20 :]
         for concert in concert_list:
             concert.name = (
                 f"{concert.name[:37]}..." if len(concert.name) > 40 else concert.name
             )
-
         concert_list = "\n".join(
             [
                 f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
