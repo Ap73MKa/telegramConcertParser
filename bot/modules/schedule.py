@@ -8,7 +8,7 @@ from bot.parsing import create_concerts
 
 
 async def func() -> None:
-    logger.info('Schedule started')
+    logger.info("Schedule started")
     hours = 8 * 60 * 60
     while True:
         sleep(hours)

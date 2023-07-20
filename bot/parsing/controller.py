@@ -8,18 +8,18 @@ from .kassir_cities import KassirCities
 async def create_concerts():
     data = await Kassir().get_data_from_all_urls()
     for item in data:
-        city = get_city_by_abb(item['city'])
+        city = get_city_by_abb(item["city"])
         if not city:
             continue
-        item['city'] = city
+        item["city"] = city
     add_many_concerts(data)
-    logger.info('Updating concert list completed')
+    logger.info("Updating concert list completed")
 
 
 async def update_list_of_available_cities():
     cities = await KassirCities().get_data_from_all_urls()
     if not cities:
-        logger.warning('No cities found')
+        logger.warning("No cities found")
         return
     add_many_cities(cities)
-    logger.info('Updating city list completed')
+    logger.info("Updating city list completed")

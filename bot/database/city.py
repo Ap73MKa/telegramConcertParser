@@ -29,7 +29,11 @@ def get_city_by_abb(abb: str) -> City | None:
 
 def get_all_city_of_user(user: User) -> list[City] | None:
     if user:
-        return UserCity.select().where(UserCity.user == user).order_by(UserCity.date.desc())
+        return (
+            UserCity.select()
+            .where(UserCity.user == user)
+            .order_by(UserCity.date.desc())
+        )
     return None
 
 

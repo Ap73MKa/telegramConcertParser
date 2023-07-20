@@ -14,7 +14,11 @@ def get_concert_by_id(concert_id: int) -> Concert | None:
 
 
 def get_concerts_by_city(city_abb: str) -> list[Concert] | None:
-    return Concert.select().where(Concert.city == get_city_by_abb(city_abb)).order_by(Concert.date.desc())
+    return (
+        Concert.select()
+        .where(Concert.city == get_city_by_abb(city_abb))
+        .order_by(Concert.date.desc())
+    )
 
 
 def delete_concert_by_id(concert_id: int) -> None:
@@ -24,7 +28,7 @@ def delete_concert_by_id(concert_id: int) -> None:
 
 
 def clean_outdated_concerts() -> None:
-    concert_list = Concert.select().where(Concert.date < date.today())
+    concert_list: list[Concert] = Concert.select().where(Concert.date < date.today())
     if concert_list:
         for concert in concert_list:
             delete_concert_by_id(concert.id)

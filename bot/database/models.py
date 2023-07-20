@@ -1,6 +1,14 @@
 from datetime import datetime
-from peewee import Model, DateField, IntegerField, PrimaryKeyField, ForeignKeyField, DateTimeField, SqliteDatabase,\
-    CharField
+from peewee import (
+    Model,
+    DateField,
+    IntegerField,
+    PrimaryKeyField,
+    ForeignKeyField,
+    DateTimeField,
+    SqliteDatabase,
+    CharField,
+)
 from bot.modules import Config
 
 
@@ -30,14 +38,14 @@ class Concert(BaseModel):
     date = DateField()
     price = IntegerField()
     link = CharField(unique=True)
-    city = ForeignKeyField(City, backref='city')
+    city = ForeignKeyField(City, backref="city")
     add_time = DateTimeField(default=datetime.now)
 
 
 class UserCity(BaseModel):
     id = PrimaryKeyField(null=False)
-    user = ForeignKeyField(User, backref='user')
-    city = ForeignKeyField(City, backref='city')
+    user = ForeignKeyField(User, backref="user")
+    city = ForeignKeyField(City, backref="city")
     date = DateTimeField(default=datetime.now)
 
 

@@ -10,5 +10,5 @@ def create_user(user_id: int, name: str) -> None:
     if not get_user_by_id(user_id):
         User.create(user_id=user_id, name=name)
         user = get_user_by_id(user_id)
-        add_user_city(user, 'spb')
-        add_user_city(user, 'msk')
+        add_user_city(user, "spb")
+        add_user_city(user, "msk")
