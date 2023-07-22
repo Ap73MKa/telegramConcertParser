@@ -9,7 +9,7 @@ from bot.parsing.controller import create_concerts
 from bot.misc import Messages, Config
 from bot.database import (
     create_user_city,
-    get_user_by_id_or_none,
+    get_user_by_id,
     delete_outdated_concerts,
     create_user,
     get_all_city_of_user,
@@ -23,16 +23,17 @@ from .other import _handle_home_request, _handle_city_check_request, _MenuStates
 
 # region Handles
 
+
 # pylint: disable=W0613
 async def __handle_response_repeat(msg: Message, state: FSMContext) -> None:
-    city_abb = get_all_city_of_user(get_user_by_id_or_none(msg.from_user.id))[0].city_id
+    city_abb = get_all_city_of_user(get_user_by_id(msg.from_user.id))[0].city_id
     await msg.bot.send_message(msg.from_user.id, Messages.get_concert_list(city_abb))
 
 
 async def __handle_response_last(msg: Message, state: FSMContext) -> None:
     cities = [
-        city.city.abb
-        for city in get_all_city_of_user(get_user_by_id_or_none(msg.from_user.id))
+        city.city_id.abb
+        for city in get_all_city_of_user(get_user_by_id(msg.from_user.id))
     ]
     await state.set_state(_MenuStates.CONCERT)
     await msg.bot.send_message(
@@ -52,8 +53,8 @@ async def __handle_response_search(msg: Message, state: FSMContext) -> None:
     await state.set_state(_MenuStates.CITY)
     await msg.bot.send_message(
         user_id,
-        text=Messages.get_random(),
-        reply_markup=MarkupKb.get_city_list(get_user_by_id_or_none(user_id)),
+        text=msg.text,
+        reply_markup=MarkupKb.get_city_list(get_user_by_id(user_id)),
     )
 
 
@@ -79,12 +80,12 @@ async def __handle_response_main(msg: Message, state: FSMContext) -> None:
 async def _handle_pagination_buttons(msg: Message) -> bool:
     user_id = msg.from_user.id
     message_text = msg.text
-    user = get_user_by_id_or_none(user_id)
+    user = get_user_by_id(user_id)
     if message_text in ("⬅️", "➡️"):
         direction = -1 if message_text == "⬅️" else 1
         await msg.bot.send_message(
             user_id,
-            text=Messages.get_random(),
+            text=msg.text,
             reply_markup=MarkupKb.get_city_list(user, direction),
         )
         return True
@@ -99,7 +100,7 @@ async def __handle_response_city(msg: Message, state: FSMContext) -> None:
     ):
         return
     user_id = msg.from_user.id
-    user = get_user_by_id_or_none(user_id)
+    user = get_user_by_id(user_id)
     await state.set_state(_MenuStates.MAIN)
     await msg.bot.send_message(
         user_id, text=Messages.get_error_city(), reply_markup=MarkupKb.get_main(user)
@@ -113,7 +114,7 @@ async def __handle_response_concert(msg: Message, state: FSMContext) -> None:
 
 
 async def __handle_callback_concert(query: CallbackQuery) -> None:
-    create_user_city(get_user_by_id_or_none(query.from_user.id), query.data[5:])
+    create_user_city(get_user_by_id(query.from_user.id), query.data[5:])
     await query.bot.send_message(
         query.from_user.id, Messages.get_concert_list(query.data[5:])
     )
@@ -124,8 +125,8 @@ async def __handle_home_request(msg: Message, state: FSMContext) -> bool:
         await state.set_state(_MenuStates.MAIN)
         await msg.bot.send_message(
             msg.from_user.id,
-            text=Messages.get_random(),
-            reply_markup=MarkupKb.get_main(get_user_by_id_or_none(msg.from_user.id)),
+            text=msg.text,
+            reply_markup=MarkupKb.get_main(get_user_by_id(msg.from_user.id)),
         )
         return True
     return False
@@ -158,8 +159,9 @@ async def __start(msg: Message, state: FSMContext) -> None:
     await msg.bot.send_message(
         user_id,
         text=Messages.get_welcome(msg.from_user.full_name),
-        reply_markup=MarkupKb.get_main(get_user_by_id_or_none(user_id)),
+        reply_markup=MarkupKb.get_main(get_user_by_id(user_id)),
     )
+
 
 # endregion
 

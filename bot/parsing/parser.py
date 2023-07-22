@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from asyncio import gather
+from typing import Any
+
 from aiohttp import ClientSession
 
 from bs4 import BeautifulSoup
@@ -7,9 +9,8 @@ from loguru import logger
 
 
 class Parser(ABC):
-    # TODO: new dataclass or NamedTuple
-    _URLS = ()
-    _PARAMS = {}
+    _URLS: list[str] = []
+    _PARAMS: dict[str, str | int] = {}
     _HEADER = {
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -47,9 +48,9 @@ class GroupParser(Parser, ABC):
     # region Private Methods
     def __filter_data(self, data: BeautifulSoup) -> dict | None:
         try:
-            data = self._scrap_data_group(data)
-            if self._is_valid_data(data):
-                return data
+            scraped_data = self._scrap_data_group(data)
+            if self._is_valid_data(scraped_data):
+                return scraped_data
         except Exception as e:
             logger.exception(e)
         return None
@@ -62,7 +63,7 @@ class GroupParser(Parser, ABC):
     def _is_valid_data(self, data: dict) -> bool:
         return True
 
-    def _scrap_all_data(self, data_groups: list[BeautifulSoup]) -> list[dict[str]]:
+    def _scrap_all_data(self, data_groups: list[BeautifulSoup]) -> list[dict[str, Any]]:
         return [
             item
             for item in [self.__filter_data(group) for group in data_groups]

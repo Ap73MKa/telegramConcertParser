@@ -21,17 +21,17 @@ class Messages(ABC):
     def get_bot_info() -> str:
         cities = get_all_cities_by_order()
         count = len(cities)
-        cities = "\n".join([f"• {city.name}" for city in choices(cities, k=6)])
+        cities_list = [city.name for city in choices(cities, k=6)]
+        cities_formatted = "\n".join([f"• {city}" for city in cities_list])
         return (
             "<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию о всех концертах городов "
             "России специально для тебя! Чтобы запустить бота напиши <b>/start</b>\n\nНа данный момент доступны "
-            f"города:\n{cities}\n И еще более {count - 6} городов!"
+            f"города:\n{cities_formatted}\n И еще более {count - 6} городов!"
         )
 
     @staticmethod
     def get_before_list() -> str:
         return "Введите <b>название города</b> или выберите город из истории поиска:"
-
 
     @staticmethod
     def get_concert_list(city_abb: str) -> str:
@@ -41,13 +41,12 @@ class Messages(ABC):
             concert.name = (
                 f"{concert.name[:37]}..." if len(concert.name) > 40 else concert.name
             )
-        concert_list = "\n".join(
-            [
-                f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
-                f"<b><a href='{concert.link}'>{concert.name}</a></b>\n"
-                for concert in concert_list
-            ]
-        )
+        concert_list = [
+            f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
+            f"<b><a href='{concert.link}'>{concert.name}</a></b>\n"
+            for concert in concert_list
+        ]
+        concert_list = "\n".join(concert_list)
         city = get_city_by_abb_or_none(city_abb).name.upper()
         return (
             f'<a href="https://{city_abb}.{Config.KASSIR_SITE}">{city}</a>. '
@@ -57,15 +56,6 @@ class Messages(ABC):
     @staticmethod
     def get_welcome(user_name: str = "Пользователь") -> str:
         return f"Привет, {user_name}!\nДавай узнаем новые концерты"
-
-    @staticmethod
-    def get_random() -> str:
-        messages = (
-            "Не пропустите ни одного концерта!🔥",
-            "Быстрый доступ ко всем концертам страны!",
-            "😎🤏\n😳🕶🤏",
-        )
-        return choices(messages)[0]
 
     @staticmethod
     def get_error_concert() -> str:

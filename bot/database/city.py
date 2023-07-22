@@ -17,10 +17,10 @@ def create_user_city(user: User, city_abb: str) -> None:
         trash = all_cities[-1]
         trash.delete_instance()
 
-    old_city = UserCity.get_or_none(UserCity.city == city)
+    old_city = UserCity.get_or_none(UserCity.city_id == city)
     if old_city:
         old_city.delete_instance()
-    UserCity.create(user=user, city=city)
+    UserCity.create(user_id=user, city_id=city)
 
 
 # endregion
@@ -44,8 +44,10 @@ def get_all_cities_by_order() -> list[City]:
     return City.select().order_by(City.name)
 
 
-def get_all_city_of_user(user: User) -> list[City]:
-    return UserCity.select().where(UserCity.user == user).order_by(UserCity.date.desc())
+def get_all_city_of_user(user: User) -> list[UserCity]:
+    return (
+        UserCity.select().where(UserCity.user_id == user).order_by(UserCity.date.desc())
+    )
 
 
 # endregion

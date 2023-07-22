@@ -3,11 +3,11 @@ from peewee import (
     Model,
     DateField,
     IntegerField,
-    PrimaryKeyField,
     ForeignKeyField,
     DateTimeField,
     SqliteDatabase,
     CharField,
+    AutoField,
 )
 
 
@@ -32,7 +32,7 @@ class User(_BaseModel):
 
 
 class Concert(_BaseModel):
-    id = PrimaryKeyField(null=False)
+    id = AutoField(null=False)
     name = CharField()
     date = DateField()
     price = IntegerField()
@@ -42,9 +42,9 @@ class Concert(_BaseModel):
 
 
 class UserCity(_BaseModel):
-    id = PrimaryKeyField(null=False)
-    user = ForeignKeyField(User, backref="user")
-    city = ForeignKeyField(City, backref="city")
+    id = AutoField(null=False)
+    user_id = ForeignKeyField(User, backref="user")
+    city_id = ForeignKeyField(City, backref="city")
     date = DateTimeField(default=datetime.now)
 
 

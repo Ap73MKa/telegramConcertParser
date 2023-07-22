@@ -9,7 +9,7 @@ from bot.database import (
     get_all_cities,
     get_city_by_name_or_none,
     create_user_city,
-    get_user_by_id_or_none,
+    get_user_by_id,
 )
 
 
@@ -23,12 +23,14 @@ class _MenuStates(StatesGroup):
 
 
 async def _handle_home_request(msg: Message, state: FSMContext) -> bool:
-    user_id = msg.from_user.id
-    user = get_user_by_id_or_none(user_id)
+    if not (user := get_user_by_id(msg.from_user.id)):
+        return False
     if "Домой" in msg.text:
         await state.set_state(_MenuStates.MAIN)
         await msg.bot.send_message(
-            user_id, text=Messages.get_random(), reply_markup=MarkupKb.get_main(user)
+            msg.from_user.id,
+            text=msg.text,
+            reply_markup=MarkupKb.get_main(user),
         )
         return True
     return False

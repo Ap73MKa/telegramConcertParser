@@ -1,26 +1,33 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
-from bot.misc import simplify_string, get_city_from_url
+from bot.misc import simplify_string, get_netloc_from_url
 from .parser import GroupParser
 
 
 class KassirCitiesParser(GroupParser):
-    _URLS = ("https://kassir.ru",)
+    _URLS = ["https://kassir.ru"]
 
     def _is_valid_data(self, data: dict) -> bool:
+        if not all(data[key] for key in data.keys()):
+            return False
         return True
 
     def _scrap_data_group(self, group: BeautifulSoup) -> dict:
+        main_element = group.find("a")
+        if not isinstance(main_element, Tag):
+            return {}
+        url = main_element.get("href")
+        text = main_element.text.strip()
         return {
-            "abb": get_city_from_url(group.get("href")),
-            "name": group.text.strip(),
-            "simple_name": simplify_string(group.text.strip()),
+            "abb": get_netloc_from_url("".join(url) if url else ""),
+            "name": text,
+            "simple_name": simplify_string(text),
         }
 
-    def _parse_page_data(self, page_data: str) -> list[dict[str]]:
-        data_groups = BeautifulSoup(page_data, "lxml").find(
-            "div", attrs={"class": "city-container-wrapper"}
-        )
-        return self._scrap_all_data(
-            [group.find("a") for group in data_groups.find_all("li")]
-        )
+    def _parse_page_data(self, page_data: str) -> list[dict[str, str]]:
+        soup_data = BeautifulSoup(page_data, "lxml")
+        city_list_wrapper = soup_data.find("div", {"class": "city-container-wrapper"})
+        if not isinstance(city_list_wrapper, Tag):
+            return []
+        city_list_elements = city_list_wrapper.find_all("li")
+        return self._scrap_all_data(city_list_elements)

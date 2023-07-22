@@ -11,16 +11,16 @@ class ThrottlingMiddleware(BaseMiddleware):
         self.prefix = key_prefix
         super().__init__()
 
-    async def on_process_message(self, message: Message, data: dict[str]) -> None:
+    async def on_process_message(self, message: Message, data: dict[str, str]) -> None:
         await self._throttle(message, data)
 
     async def on_process_callback_query(
-        self, query: CallbackQuery, data: dict[str]
+        self, query: CallbackQuery, data: dict[str, str]
     ) -> None:
         await self._throttle(query.message, data)
 
     # pylint: disable=W0613
-    async def _throttle(self, message: Message, data: dict[str]) -> None:
+    async def _throttle(self, message: Message, data: dict[str, str]) -> None:
         handler = current_handler.get()
         dispatcher = Dispatcher.get_current()
         if handler:

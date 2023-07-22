@@ -30,7 +30,7 @@ def delete_concert_by_id(concert_id: int) -> None:
 
 
 def delete_outdated_concerts() -> None:
-    concert_list: list[Concert] = Concert.select().where(Concert.date < date.today())
+    concert_list = Concert.select().where(Concert.date < date.today())
     for concert in concert_list:
         delete_concert_by_id(concert.id)
 
@@ -40,7 +40,7 @@ def delete_outdated_concerts() -> None:
 # region Sql insert
 
 
-def insert_many_concerts(data: list[dict[str]]) -> None:
+def insert_many_concerts(data: list[dict[str, str]]) -> None:
     with db.atomic():
         Concert.insert_many(data).on_conflict_ignore(True).execute()
 
