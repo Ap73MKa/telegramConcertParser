@@ -1,5 +1,5 @@
 # database and bot
-aiogram~=2.25.1
+aiogram==3.0.0b8
 peewee~=3.16.2
 
 # parsing
