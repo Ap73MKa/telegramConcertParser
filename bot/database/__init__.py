@@ -16,4 +16,4 @@ from .city import (
     insert_many_cities,
     get_all_cities_by_order,
 )
-from .user import get_user_by_id, create_user
+from .user import get_user_by_id_or_none, create_user

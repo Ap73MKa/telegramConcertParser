@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from bot.database import get_user_by_id, create_user_city
+from bot.database import get_user_by_id_or_none, create_user_city
 from bot.handlers.main_router import main_router
 from bot.handlers.states import MenuStates
 from bot.keyboards import MarkupKb
@@ -14,15 +14,23 @@ city_router = Router()
 
 @city_router.message(Command("start"))
 async def start_city_menu(message: Message, state: FSMContext):
-    user = get_user_by_id(message.from_user.id)
+    if not message.from_user or not message.text:
+        return None
+    if not (user := get_user_by_id_or_none(message.from_user.id)):
+        return None
     await message.answer(message.text, reply_markup=MarkupKb.get_city_list(user))
     await state.set_state(MenuStates.city_menu)
 
 
 @main_router.message(MenuStates.city_menu, F.text.in_({"⬅️", "➡️"}))
 async def handle_pagination_buttons(message: Message):
+    if not message.text:
+        return None
+    if not message.from_user or not (
+        user := get_user_by_id_or_none(message.from_user.id)
+    ):
+        return None
     emoji = message.text
-    user = get_user_by_id(message.from_user.id)
     direction = -1 if emoji == "⬅️" else 1
     await message.answer(
         text=emoji, reply_markup=MarkupKb.get_city_list(user, direction)
@@ -31,9 +39,14 @@ async def handle_pagination_buttons(message: Message):
 
 @main_router.message(MenuStates.city_menu, F.text)
 async def handle_city_request_message(message: Message):
+    if not message.text:
+        return None
     try:
         city = fuzzy_recognize_city(message.text)
-        user = get_user_by_id(message.from_user.id)
+        if not message.from_user or not (
+            user := get_user_by_id_or_none(message.from_user.id)
+        ):
+            return None
         create_user_city(user, city.abb)
         await message.answer(Messages.get_concert_list(city.abb))
     except ValueError:

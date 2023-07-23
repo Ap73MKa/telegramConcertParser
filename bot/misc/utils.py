@@ -1,7 +1,7 @@
 from re import sub
-import validators
 from urllib.parse import urlparse
 
+import validators
 from rapidfuzz.process import extractOne
 
 from bot.database import get_all_cities, get_city_by_name_or_none

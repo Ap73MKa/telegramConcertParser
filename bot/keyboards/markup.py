@@ -27,19 +27,27 @@ class MarkupKb(ABC):
 
     @staticmethod
     def get_main(user: User) -> ReplyKeyboardMarkup:
-        last_city = get_city_by_abb_or_none(get_all_city_of_user(user)[0].city_id)
-        kb = [
-            [KeyboardButton(text=f"Повторить запрос ({last_city.name}) ❤️‍🔥")],
-            [KeyboardButton(text="Предыдущие запросы 🔥")],
-            [KeyboardButton(text="Поиск концертов по городам 💥")],
-            [KeyboardButton(text="О телеграм боте 💬")],
-        ]
-        return ReplyKeyboardMarkup(keyboard=kb, row_width=1, resize_keyboard=True)
+        kb = []
+        all_user_cities = get_all_city_of_user(user)
+        if all_user_cities and (
+            last_city := get_city_by_abb_or_none(all_user_cities[0].city_id)
+        ):
+            kb = [
+                [KeyboardButton(text=f"Повторить запрос ({last_city.name}) ❤️‍🔥")],
+                [KeyboardButton(text="Предыдущие запросы 🔥")],
+            ]
+        kb.extend(
+            [
+                [KeyboardButton(text="Поиск концертов по городам 💥")],
+                [KeyboardButton(text="О телеграм боте 💬")],
+            ]
+        )
+        return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
     @staticmethod
     def get_home() -> ReplyKeyboardMarkup:
         kb = [[KeyboardButton(text="Домой 🏚")]]
-        return ReplyKeyboardMarkup(keyboard=kb, row_width=1, resize_keyboard=True)
+        return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
     @staticmethod
     def get_city_list(user: User, direction: int = 0) -> ReplyKeyboardMarkup:
@@ -61,4 +69,4 @@ class MarkupKb(ABC):
                 KeyboardButton(text="➡️"),
             ]
         )
-        return ReplyKeyboardMarkup(keyboard=kb, row_width=3, resize_keyboard=True)
+        return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)

@@ -7,7 +7,7 @@ from aiogram.types import Message
 
 from bot.database import (
     create_user,
-    get_user_by_id,
+    get_user_by_id_or_none,
     delete_outdated_concerts,
     get_all_city_of_user,
 )
@@ -22,10 +22,13 @@ common_router = Router()
 
 @main_router.message(Command("start"))
 async def start_main_menu(message: Message, state: FSMContext):
+    if not message.from_user:
+        return None
     user_id = message.from_user.id
     user_name = message.from_user.full_name
     create_user(user_id, user_name)
-    user = get_user_by_id(user_id)
+    if not (user := get_user_by_id_or_none(message.from_user.id)):
+        return None
     await message.answer(
         Messages.get_welcome(user_name), reply_markup=MarkupKb.get_main(user)
     )
@@ -34,6 +37,8 @@ async def start_main_menu(message: Message, state: FSMContext):
 
 @main_router.message(Command("update"))
 async def handle_update_command(message: Message) -> None:
+    if not message.from_user:
+        return None
     user_id = message.from_user.id
     if user_id != int(Config.ADMIN_ID):
         await message.answer("You don't have permission")
@@ -58,7 +63,10 @@ async def handle_about_message(message: Message) -> None:
 
 @main_router.message(MenuStates.main_menu, F.text.contains("Повторить запрос"))
 async def handle_repeat_message(message: Message) -> None:
-    user = get_user_by_id(message.from_user.id)
+    if not message.from_user or not (
+        user := get_user_by_id_or_none(message.from_user.id)
+    ):
+        return None
     cities = get_all_city_of_user(user)
     if len(cities) == 0:
         return
