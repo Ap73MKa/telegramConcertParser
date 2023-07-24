@@ -2,9 +2,9 @@ from abc import ABC
 from random import choices
 
 from bot.database import (
-    get_concerts_by_city,
-    get_city_by_abb_or_none,
     get_all_cities_by_order,
+    get_city_by_abb_or_none,
+    get_concerts_by_city,
 )
 from bot.misc.config import Config
 
@@ -14,7 +14,7 @@ class Messages(ABC):
     def get_site_info() -> str:
         return (
             '<b><a href="https://kassir.ru">Kassir</a></b> - сайт, на котором мы и'
-            " узнаем все информацию об концертах. Если вам неудобен наш бот, то вы"
+            " узнаем все информацию o6 концертах. Если вам неудобен наш бот, то вы"
             " всегда можете узнать новую информацию на сайте 🤔"
         )
 
@@ -26,8 +26,8 @@ class Messages(ABC):
         cities_formatted = "\n".join([f"• {city}" for city in cities_list])
         return (
             "<b>tgConcerts</b> - это особый телеграм бот, который собирает информацию"
-            " о всех концертах городов России специально для тебя! Чтобы запустить"
-            " бота напиши <b>/start</b>\n\nНа данный момент доступны"
+            " o всех концертах городов России специально для тебя! Чтобы запустить"
+            " бота напиши <b>/start</b>\n\nHa данный момент доступны"
             f" города:\n{cities_formatted}\n И еще более {count - 6} городов!"
         )
 
@@ -39,9 +39,12 @@ class Messages(ABC):
     def get_concert_list(city_abb: str) -> str:
         concert_list = get_concerts_by_city(city_abb)
         concert_list = concert_list[len(concert_list) - 20 :]
+        max_city_letter_count = 40
         for concert in concert_list:
             concert.name = (
-                f"{concert.name[:37]}..." if len(concert.name) > 40 else concert.name
+                f"{concert.name[:37]}..."
+                if len(concert.name) > max_city_letter_count
+                else concert.name
             )
         concert_list = [
             f"{concert.date.strftime('%a, %d %b. %Y')}<i> от {concert.price} ₽</i>\n"
@@ -60,7 +63,7 @@ class Messages(ABC):
 
     @staticmethod
     def get_welcome(user_name: str = "Пользователь") -> str:
-        return f"Привет, {user_name}!\nДавай узнаем новые концерты"
+        return f"Привет, {user_name}!\nДaвaй узнаем новые концерты"
 
     @staticmethod
     def get_error_concert() -> str:
@@ -72,4 +75,4 @@ class Messages(ABC):
 
     @staticmethod
     def get_update_time(time) -> str:
-        return f"База данных обновлена.\nВыполнено за: {time:.1f} сек."
+        return f"База данных обновлена.\nBыпoлнeнo за: {time:.1f} сек."

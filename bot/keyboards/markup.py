@@ -1,14 +1,14 @@
 from abc import ABC
 from math import ceil
 
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
-from bot.database.models import User
 from bot.database import (
     get_all_cities_by_order,
-    get_city_by_abb_or_none,
     get_all_city_of_user,
+    get_city_by_abb_or_none,
 )
+from bot.database.models import User
 
 _CITIES_PER_PAGE = 9
 
@@ -39,7 +39,7 @@ class MarkupKb(ABC):
         kb.extend(
             [
                 [KeyboardButton(text="Поиск концертов по городам 💥")],
-                [KeyboardButton(text="О телеграм боте 💬")],
+                [KeyboardButton(text="O телеграм боте 💬")],
             ]
         )
         return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
@@ -65,7 +65,7 @@ class MarkupKb(ABC):
         kb.append(
             [
                 KeyboardButton(text="⬅️"),
-                KeyboardButton(text=f"{current_page}/{num_pages}\nДомой 🏚"),
+                KeyboardButton(text=f"{current_page}/{num_pages}\nДoмoй 🏚"),
                 KeyboardButton(text="➡️"),
             ]
         )

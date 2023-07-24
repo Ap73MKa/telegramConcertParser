@@ -31,9 +31,10 @@ def fuzzy_recognize_city(title: str) -> City:
         simplify_string(title),
         [city.simple_name for city in get_all_cities()],
     )
-    if close[1] < 80:
+    min_close_factor = 80
+    if close[1] < min_close_factor:
         raise ValueError("No matches")
-    city = get_city_by_name_or_none(close[0])
+    city = get_city_by_name_or_none(str(close[0]))
     if not city:
         raise ValueError("No matches cities in database")
     return city

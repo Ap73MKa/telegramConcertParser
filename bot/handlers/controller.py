@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 
 from bot.handlers.city_router import city_router
 from bot.handlers.concert_router import concert_router
-from bot.handlers.main_router import main_router, common_router
+from bot.handlers.main_router import common_router, main_router
 
 
 def register_handlers(dp: Dispatcher):

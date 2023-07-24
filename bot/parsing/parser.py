@@ -1,17 +1,16 @@
 from abc import ABC, abstractmethod
 from asyncio import gather
-from typing import Any
+from typing import Any, ClassVar
 
 from aiohttp import ClientSession
-
 from bs4 import BeautifulSoup
 from loguru import logger
 
 
 class Parser(ABC):
-    _URLS: list[str] = []
-    _PARAMS: dict[str, str | int] = {}
-    _HEADER = {
+    _URLS: ClassVar[list[str]] = []
+    _PARAMS: ClassVar[dict[str, str | int]] = {}
+    _HEADER: ClassVar[dict[str, str]] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; rv:104.0) Gecko/20100101 Firefox/104.0",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     }

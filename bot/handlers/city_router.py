@@ -3,11 +3,11 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from bot.database import get_user_by_id_or_none, create_user_city
+from bot.database import create_user_city, get_user_by_id_or_none
 from bot.handlers.main_router import main_router
 from bot.handlers.states import MenuStates
 from bot.keyboards import MarkupKb
-from bot.misc import fuzzy_recognize_city, Messages
+from bot.misc import Messages, fuzzy_recognize_city
 
 city_router = Router()
 

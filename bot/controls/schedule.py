@@ -1,10 +1,11 @@
-from time import sleep
-from threading import Thread
 from asyncio import run
+from threading import Thread
+from time import sleep
+
 from loguru import logger
 
-from bot.parsing.controller import create_concerts
 from bot.database import delete_outdated_concerts
+from bot.parsing.controller import create_concerts
 
 
 async def __func() -> None:

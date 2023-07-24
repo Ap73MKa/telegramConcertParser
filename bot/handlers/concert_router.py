@@ -1,12 +1,12 @@
 from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
-from bot.database import get_all_city_of_user, get_user_by_id_or_none, create_user_city
+from bot.database import create_user_city, get_all_city_of_user, get_user_by_id_or_none
 from bot.handlers.main_router import main_router
 from bot.handlers.states import MenuStates
-from bot.keyboards import MarkupKb, InlineKb
+from bot.keyboards import InlineKb, MarkupKb
 from bot.misc import Messages
 
 concert_router = Router()

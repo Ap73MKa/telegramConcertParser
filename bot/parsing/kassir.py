@@ -1,23 +1,24 @@
 import re
 from datetime import date, datetime
+from typing import ClassVar
 
-from loguru import logger
 from bs4 import BeautifulSoup, Tag
+from loguru import logger
 
-from bot.misc import Config, get_netloc_from_url
 from bot.database import get_all_cities
+from bot.misc import Config, get_netloc_from_url
+
 from .parser import GroupParser
 
 
 class KassirParser(GroupParser):
-    _PARAMS = {"sort": 0, "c": 60}
+    _PARAMS: ClassVar[dict[str, str | int]] = {"sort": 0, "c": 60}
 
     def __init__(self):
         self._URLS = [
             f"https://{city.abb}.{Config.KASSIR_SITE}" for city in get_all_cities()
         ]
-        self.ban_words = [
-            "оркестр",
+        self.ban_words = ["оркестр",
             "фестиваль",
             "джаз",
             "сертификат",
@@ -28,7 +29,7 @@ class KassirParser(GroupParser):
             "скрипка",
             "орган",
             "jazz",
-            "хор",
+            "xop",
             "театр",
             "премия",
             "радио",

@@ -1,7 +1,8 @@
 from datetime import date
-import pytest
 
+import pytest
 from bs4 import BeautifulSoup
+
 from bot.parsing.kassir import KassirParser
 
 
@@ -18,7 +19,7 @@ def parser():
             <div class="compilation-tile__title">Title</div>
             <time class="compilation-tile__date" datetime="2022-12-31T23:59:59+00:00"></time>
             <li class="compilation-tile__price-block">
-                <span class="text-[0.65rem]">от 2000 Р</span>
+                <span class="text-[0.65rem]">от 2000 P</span>
             </li>
             <a class="compilation-tile__img-block" href="/koncert/1"></a>
             """,
@@ -34,7 +35,7 @@ def parser():
             <div>Title</div>
             <time datetime="2022-12-31T23:59:59+00:00"></time>
             <li>
-                <span>от 2000 Р</span>
+                <span>от 2000 P</span>
             </li>
             <a href="/koncert/1"></a>
             """,
@@ -50,7 +51,7 @@ def parser():
             <div class="compilation-tile__title">Title😄</div>
             <time class="compilation-tile__date" datetime="2022-12-31T23:59:59"></time>
             <li class="compilation-tile__price-block">
-                <span class="text-[0.65rem]">от 2 f0  00 Р</span>
+                <span class="text-[0.65rem]">от 2 f0  00 P</span>
             </li>
             <a class="compilation-tile__img-block" href="/koncert/1 1"></a>
             """,
@@ -66,7 +67,7 @@ def parser():
             <div class="compilation-tile__title"></div>
             <time class="compilation-tile__date"></time>
             <li class="compilation-tile__price-block">
-                <span class="text-[0.65rem]">ааа</span>
+                <span class="text-[0.65rem]">aaa</span>
             </li>
             <a class="compilation-tile__img-block"></a>
             """,
@@ -177,7 +178,7 @@ def test_is_valid_date(parser, data, expected_data):
                     <div class="compilation-tile__title">Title</div>
                     <time class="compilation-tile__date" datetime="2022-12-31T23:59:59+00:00"></time>
                     <li class="compilation-tile__price-block">
-                        <span class="text-[0.65rem]">от 2000 Р</span>
+                        <span class="text-[0.65rem]">от 2000 P</span>
                     </li>
                     <a class="compilation-tile__img-block" href="/koncert/1"></a>
                 </article>
@@ -185,7 +186,7 @@ def test_is_valid_date(parser, data, expected_data):
                     <div class="compilation-tile__title">Title</div>
                     <time class="compilation-tile__date" datetime="2022-12-31T23:59:59+00:00"></time>
                     <li class="compilation-tile__price-block">
-                        <span class="text-[0.65rem]">от 2000 Р</span>
+                        <span class="text-[0.65rem]">от 2000 P</span>
                     </li>
                     <a class="compilation-tile__img-block" href="/koncert/1"></a>
                 </article>
@@ -216,7 +217,7 @@ def test_is_valid_date(parser, data, expected_data):
                     <div class="compilation-tile__title">Title</div>
                     <time class="compilation-tile__date" datetime="2022-12-31T23:59:59+00:00"></time>
                     <li class="compilation-tile__price-block">
-                        <span class="text-[0.65rem]">от 2000 Р</span>
+                        <span class="text-[0.65rem]">от 2000 P</span>
                     </li>
                     <a class="compilation-tile__img-block" href="/koncert/1"></a>
                 </article>
@@ -231,7 +232,7 @@ def test_is_valid_date(parser, data, expected_data):
                         <div class="compilation-tile__title">Title</div>
                         <time class="compilation-tile__date" datetime="2022-12-31T23:59:59+00:00"></time>
                         <li class="compilation-tile__price-block">
-                            <span class="text-[0.65rem]">от 2000 Р</span>
+                            <span class="text-[0.65rem]">от 2000 P</span>
                         </li>
                         <a class="compilation-tile__img-block" href="/koncert/1"></a>
                     </article>

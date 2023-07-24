@@ -1,6 +1,6 @@
 from abc import ABC
-from typing import Final
 from pathlib import Path
+from typing import Final
 
 
 class PathControl(ABC):

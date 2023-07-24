@@ -1,34 +1,33 @@
 import asyncio
-from locale import setlocale, LC_ALL
+from locale import LC_ALL, setlocale
 
-from aiogram.enums import ParseMode
 from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
 
-
+from bot.controls import PathControl, start_schedule
+from bot.database import register_models
 from bot.handlers.controller import register_handlers
 from bot.misc import Config
-from bot.controls import start_schedule, PathControl
-from bot.parsing import update_list_of_available_cities, create_concerts
-from bot.database import register_models
+from bot.parsing import create_concerts, update_list_of_available_cities
 
 
 def config_logs() -> None:
-    log_path = PathControl.get("logs/{time}.log")
-    logger.add(
-        log_path,
-        format="{time} {level} {message}",
-        rotation="10:00",
-        compression="zip",
-        retention="3 days",
-    )
+    if Config.DEBUG:
+        log_path = PathControl.get("logs/{time}.log")
+        logger.add(
+            log_path,
+            format="{time} {level} {message}",
+            rotation="10:00",
+            compression="zip",
+            retention="3 days",
+        )
 
 
 async def on_start_up(dp: Dispatcher) -> None:
     logger.info("Bot starts")
-    if Config.DEBUG:
-        config_logs()
+    config_logs()
     register_models()
     register_handlers(dp)
     setlocale(LC_ALL, ("ru_RU", "UTF-8"))

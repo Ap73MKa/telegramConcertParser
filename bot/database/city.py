@@ -1,5 +1,4 @@
-from .models import City, UserCity, db, User
-
+from .models import City, User, UserCity, db
 
 # region Sql create
 
@@ -12,8 +11,9 @@ def create_city(abb: str, name: str) -> None:
 def create_user_city(user: User, city_abb: str) -> None:
     city = get_city_by_abb_or_none(city_abb)
     all_cities = get_all_city_of_user(user)
+    max_city_count = 8
 
-    if len(all_cities) >= 8:
+    if len(all_cities) >= max_city_count:
         trash = all_cities[-1]
         trash.delete_instance()
 

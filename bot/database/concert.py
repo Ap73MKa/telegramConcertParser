@@ -1,8 +1,7 @@
 from datetime import date
 
-from .models import Concert, db
 from .city import get_city_by_abb_or_none
-
+from .models import Concert, db
 
 # region Sql get
 

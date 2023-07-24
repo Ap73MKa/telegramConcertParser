@@ -1,15 +1,15 @@
 from datetime import datetime
-from peewee import (
-    Model,
-    DateField,
-    IntegerField,
-    ForeignKeyField,
-    DateTimeField,
-    SqliteDatabase,
-    CharField,
-    AutoField,
-)
 
+from peewee import (
+    AutoField,
+    CharField,
+    DateField,
+    DateTimeField,
+    ForeignKeyField,
+    IntegerField,
+    Model,
+    SqliteDatabase,
+)
 
 db = SqliteDatabase("database.db")
 

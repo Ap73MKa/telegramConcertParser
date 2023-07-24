@@ -1,19 +1,19 @@
 from time import perf_counter
 
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from bot.database import (
     create_user,
-    get_user_by_id_or_none,
     delete_outdated_concerts,
     get_all_city_of_user,
+    get_user_by_id_or_none,
 )
 from bot.handlers.states import MenuStates
 from bot.keyboards import MarkupKb
-from bot.misc import Messages, Config
+from bot.misc import Config, Messages
 from bot.parsing import create_concerts
 
 main_router = Router()
@@ -56,7 +56,7 @@ async def switch_to_main_menu_if_home(message: Message, state: FSMContext):
     await state.set_state(MenuStates.main_menu)
 
 
-@main_router.message(MenuStates.main_menu, F.text.contains("О телеграм боте"))
+@main_router.message(MenuStates.main_menu, F.text.contains("O телеграм боте"))
 async def handle_about_message(message: Message) -> None:
     await message.answer(Messages.get_site_info())
 

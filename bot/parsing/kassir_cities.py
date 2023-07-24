@@ -1,11 +1,14 @@
+from typing import ClassVar
+
 from bs4 import BeautifulSoup, Tag
 
-from bot.misc import simplify_string, get_netloc_from_url
+from bot.misc import get_netloc_from_url, simplify_string
+
 from .parser import GroupParser
 
 
 class KassirCitiesParser(GroupParser):
-    _URLS = ["https://kassir.ru"]
+    _URLS: ClassVar[list[str]] = ["https://kassir.ru"]
 
     def _is_valid_data(self, data: dict) -> bool:
         if not all(data[key] for key in data.keys()):
