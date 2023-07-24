@@ -50,12 +50,6 @@ async def handle_update_command(message: Message) -> None:
     await message.answer(final_time)
 
 
-@main_router.message(F.text.contains("Домой"))
-async def switch_to_main_menu_if_home(message: Message, state: FSMContext):
-    await start_main_menu(message, state)
-    await state.set_state(MenuStates.main_menu)
-
-
 @main_router.message(MenuStates.main_menu, F.text.contains("O телеграм боте"))
 async def handle_about_message(message: Message) -> None:
     await message.answer(Messages.get_site_info())
@@ -71,6 +65,11 @@ async def handle_repeat_message(message: Message) -> None:
     if len(cities) == 0:
         return
     await message.answer(Messages.get_concert_list(cities[0].city_id))
+
+@main_router.message(F.text.contains("Домой"))
+async def switch_to_main_menu_if_home(message: Message, state: FSMContext):
+    await start_main_menu(message, state)
+    await state.set_state(MenuStates.main_menu)
 
 
 @common_router.message(F.text)

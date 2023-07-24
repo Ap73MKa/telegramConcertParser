@@ -1,5 +1,4 @@
 import asyncio
-from locale import LC_ALL, setlocale
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
@@ -30,7 +29,6 @@ async def on_start_up(dp: Dispatcher) -> None:
     config_logs()
     register_models()
     register_handlers(dp)
-    setlocale(LC_ALL, ("ru_RU", "UTF-8"))
     await update_list_of_available_cities()
     await create_concerts()
     start_schedule()

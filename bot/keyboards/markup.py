@@ -65,7 +65,7 @@ class MarkupKb(ABC):
         kb.append(
             [
                 KeyboardButton(text="⬅️"),
-                KeyboardButton(text=f"{current_page}/{num_pages}\nДoмoй 🏚"),
+                KeyboardButton(text=f"{current_page}/{num_pages}\nДомой 🏚"),
                 KeyboardButton(text="➡️"),
             ]
         )

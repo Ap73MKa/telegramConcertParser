@@ -6,5 +6,5 @@ from bot.handlers.main_router import common_router, main_router
 
 
 def register_handlers(dp: Dispatcher):
-    main_router.include_routers(city_router, concert_router, common_router)
+    main_router.include_routers(concert_router, city_router, common_router)
     dp.include_router(main_router)
