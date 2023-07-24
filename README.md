@@ -30,18 +30,16 @@ This is a Telegram Bot written in Python for monitoring concerts. Based on [aiog
 git clone https://github.com/Ap73MKa/telegramConcertParser
 ```
 
-- Create virtual environment
+- Install PDM via pip
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+pip install pdm
 ```
 
-- Install requirements
+- Setup project
 
 ```bash
-pip install --upgrade pip
-pip install -r requirements.txt
+pdm sync
 ```
 
 - Run bot

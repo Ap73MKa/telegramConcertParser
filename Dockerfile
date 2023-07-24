@@ -1,30 +1,25 @@
 # Stage 1
 FROM python:3.11-slim as base
 
-ENV PYTHONUNBUFFERED=1
+ARG PYTHON_VER=3.11
 
 WORKDIR /app
 
 # Stage 2
 FROM base as builder
 
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_VERSION=1.5.1
-
-COPY pyproject.toml poetry.lock ./
-RUN pip install -U pip setuptools
-RUN pip install "poetry==$POETRY_VERSION"
-RUN poetry install --without dev --no-root
+COPY ./bot ./bot
+COPY pyproject.toml pdm.lock ./
+RUN pip install -U pip setuptools wheel
+RUN pip install pdm
+RUN mkdir __pypackages__ && pdm sync --prod --no-editable
 
 # Stage 3
 FROM base as runner
 
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH=/app/pkgs
 
-COPY --from=builder /app/.venv ./.venv
-COPY ./bot ./bot
+COPY --from=builder /app/__pypackages__/${PYTHON_VER}/lib ./pkgs
+COPY --from=builder /app/__pypackages__/${PYTHON_VER}/bin/* ./bin/
+
 CMD ["python", "-m", "bot"]

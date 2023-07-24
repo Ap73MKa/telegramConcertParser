@@ -1,3 +1,24 @@
+[project]
+name = "telegramConcertParser"
+version = "1.2.0"
+description = "A Telegram bot powered by aiogram that parses information about concerts"
+authors = [
+    {name = "Ap73MKa",email = "artyom.vlasov.05@mail.ru"},
+]
+dependencies = [
+    "aiogram>=3.0.0b8",
+    "peewee>=3.16.2",
+    "lxml>=4.9.3",
+    "aiohttp>=3.8.5",
+    "beautifulsoup4>=4.12.2",
+    "validators>=0.20.0",
+    "loguru>=0.7.0",
+    "rapidfuzz>=3.1.2",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
 [tool.ruff]
 select = ["E", "F", "B", "UP", "I", "PL", "ISC", "RUF"]
 unfixable = ["B"]
@@ -12,36 +33,12 @@ pretty = false
 check_untyped_defs = true
 warn_redundant_casts = true
 
-[tool.poetry]
-name = "telegramconcertparser"
-version = "1.2.0"
-description = "A Telegram bot powered by aiogram that parses information about concerts"
-authors = ["Ap73MKa <artyom.vlasov.05@mail.ru>"]
-license = "MIT"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.10"
-aiogram = "^3.0.0b8"
-peewee = "^3.16.2"
-lxml = "^4.9.3"
-aiohttp = "^3.8.5"
-beautifulsoup4 = "^4.12.2"
-validators = "^0.20.0"
-loguru = "^0.7.0"
-rapidfuzz = "^3.1.2"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.0.280"
-black = "^23.7.0"
-pytest = "^7.4.0"
-isort = "^5.12.0"
-pre-commit = "^3.3.3"
-mypy = "^1.4.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "black>=23.7.0",
+    "ruff>=0.0.280",
+    "isort>=5.12.0",
+    "mypy>=1.4.1",
+    "pre-commit>=3.3.3",
+]
