@@ -11,13 +11,16 @@ class InlineKb(ABC):
         raise Exception("I am a static! Dont touch me...")
 
     @staticmethod
-    def get_city(city_abb_list: list[str]) -> InlineKeyboardMarkup:
+    def get_city_keyboard(city_abb_list: list[str]) -> InlineKeyboardMarkup:
         builder = InlineKeyboardBuilder()
-        for abb in city_abb_list:
-            if not (city := get_city_by_abb_or_none(abb)):
-                continue
-            button = InlineKeyboardButton(
-                text=str(city.name), callback_data=f"city-{abb}"
+        buttons = [
+            InlineKeyboardButton(
+                text=str(get_city_by_abb_or_none(abb).name),
+                callback_data=f"city-{abb}"
             )
-            builder.row(button)
+            for abb in city_abb_list
+            if get_city_by_abb_or_none(abb)
+        ]
+        builder.add(*buttons)
+        builder.adjust(1, repeat=True)
         return builder.as_markup()

@@ -30,7 +30,7 @@ async def start_main_menu(message: Message, state: FSMContext):
     if not (user := get_user_by_id_or_none(message.from_user.id)):
         return None
     await message.answer(
-        Messages.get_welcome(user_name), reply_markup=MarkupKb.get_main(user)
+        Messages.get_welcome(user_name), reply_markup=MarkupKb.get_main_keyboard(user)
     )
     await state.set_state(MenuStates.main_menu)
 

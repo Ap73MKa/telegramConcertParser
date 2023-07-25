@@ -18,7 +18,7 @@ async def start_city_menu(message: Message, state: FSMContext):
         return None
     if not (user := get_user_by_id_or_none(message.from_user.id)):
         return None
-    await message.answer(message.text, reply_markup=MarkupKb.get_city_list(user))
+    await message.answer(message.text, reply_markup=MarkupKb.get_city_keyboard(user))
     await state.set_state(MenuStates.city_menu)
 
 
@@ -33,7 +33,7 @@ async def handle_pagination_buttons(message: Message):
     emoji = message.text
     direction = -1 if emoji == "⬅️" else 1
     await message.answer(
-        text=emoji, reply_markup=MarkupKb.get_city_list(user, direction)
+        text=emoji, reply_markup=MarkupKb.get_city_keyboard(user, direction)
     )
 
 @city_router.message(MenuStates.city_menu, F.text.contains("❌"))

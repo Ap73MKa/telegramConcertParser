@@ -9,6 +9,7 @@ from bot.controls import PathControl, start_schedule
 from bot.database import register_models
 from bot.handlers import bot_commands, register_handlers
 from bot.misc import Config
+from bot.parsing import update_list_of_available_cities
 
 
 def config_logs() -> None:
@@ -29,7 +30,7 @@ async def on_start_up(dp: Dispatcher, bot: Bot) -> None:
     register_models()
     register_handlers(dp)
     await bot.set_my_commands(bot_commands)
-    # await update_list_of_available_cities()
+    await update_list_of_available_cities()
     await start_schedule()
     await bot.delete_webhook(drop_pending_updates=True)
 

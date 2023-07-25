@@ -19,11 +19,22 @@ async def start_concert_menu(message: Message, state: FSMContext) -> None:
     ):
         return None
     cities = [city.city_id.abb for city in get_all_city_of_user(user)]
-    await message.answer("Ваш список запросов:", reply_markup=MarkupKb.get_home())
+    await message.answer("Ваш список запросов:", reply_markup=MarkupKb.get_home_keyboard())
     await message.answer(
-        Messages.get_before_list(), reply_markup=InlineKb.get_city(cities)
+        Messages.get_before_list(), reply_markup=InlineKb.get_city_keyboard(cities)
     )
     await state.set_state(MenuStates.concert_menu)
+
+@concert_router.message(MenuStates.concert_menu, F.text.contains("Просмотреть список"))
+async def handle_recheck_list(message: Message):
+    if not message.from_user or not (
+            user := get_user_by_id_or_none(message.from_user.id)
+    ):
+        return None
+    cities = [city.city_id.abb for city in get_all_city_of_user(user)]
+    await message.answer(
+        Messages.get_before_list(), reply_markup=InlineKb.get_city_keyboard(cities)
+    )
 
 
 @concert_router.callback_query(MenuStates.concert_menu, F.data.startswith("city-"))
@@ -37,7 +48,7 @@ async def handle_city_callback(query: CallbackQuery):
         return None
     city_abb = data[1]
     create_user_city(user, city_abb)
-    await query.message.answer(Messages.get_concert_list(city_abb))
+    await query.message.edit_text(Messages.get_concert_list(city_abb))
 
 
 @main_router.message(MenuStates.main_menu, F.text.contains("Предыдущие запросы"))
