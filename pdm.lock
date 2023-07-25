@@ -6,7 +6,7 @@ groups = ["default", "dev"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:92b7e918fd6d9c5cf96be3b4444b4c863b50d003f319210fb8532d716aac4a2b"
+content_hash = "sha256:e16d3893fd7d69359844383a768b890a6ca0f347d4e24693fd6df5e39940a15e"
 
 [[package]]
 name = "aiofiles"
@@ -137,6 +137,19 @@ files = [
     {file = "aiohttp-3.8.5-cp39-cp39-win32.whl", hash = "sha256:00ad4b6f185ec67f3e6562e8a1d2b69660be43070bd0ef6fcec5211154c7df67"},
     {file = "aiohttp-3.8.5-cp39-cp39-win_amd64.whl", hash = "sha256:c0a9034379a37ae42dea7ac1e048352d96286626251862e448933c0f59cbd79c"},
     {file = "aiohttp-3.8.5.tar.gz", hash = "sha256:b9552ec52cc147dbf1944ac7ac98af7602e51ea2dcd076ed194ca3c0d1c7d0bc"},
+]
+
+[[package]]
+name = "aiojobs"
+version = "1.1.0"
+requires_python = ">=3.7"
+summary = "Job scheduler for managing background tasks (asyncio)"
+dependencies = [
+    "async-timeout>=4.0.0",
+]
+files = [
+    {file = "aiojobs-1.1.0-py3-none-any.whl", hash = "sha256:2080af76fda924bf2a60446f9b4435b11bb2418315c82664b07c2bb369b595d3"},
+    {file = "aiojobs-1.1.0.tar.gz", hash = "sha256:f0c43dfc4de359052a67df309b593732c32028deef1bb787c7a363da29accde3"},
 ]
 
 [[package]]

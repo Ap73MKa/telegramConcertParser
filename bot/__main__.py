@@ -9,7 +9,7 @@ from bot.controls import PathControl, start_schedule
 from bot.database import register_models
 from bot.handlers.controller import register_handlers
 from bot.misc import Config
-from bot.parsing import create_concerts, update_list_of_available_cities
+from bot.parsing import update_list_of_available_cities
 
 
 def config_logs() -> None:
@@ -30,8 +30,7 @@ async def on_start_up(dp: Dispatcher) -> None:
     register_models()
     register_handlers(dp)
     await update_list_of_available_cities()
-    await create_concerts()
-    start_schedule()
+    await start_schedule()
 
 
 async def main() -> None:
@@ -43,4 +42,7 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Bot stopped")
