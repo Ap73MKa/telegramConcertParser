@@ -7,7 +7,6 @@ authors = [
 ]
 dependencies = [
     "aiogram>=3.0.0b8",
-    "peewee>=3.16.2",
     "lxml>=4.9.3",
     "aiohttp>=3.8.5",
     "beautifulsoup4>=4.12.2",
@@ -15,6 +14,8 @@ dependencies = [
     "loguru>=0.7.0",
     "rapidfuzz>=3.1.2",
     "aiojobs>=1.1.0",
+    "sqlalchemy>=2.0.19",
+    "asyncpg>=0.28.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -23,7 +24,7 @@ license = {text = "MIT"}
 [tool.ruff]
 select = ["E", "F", "B", "UP", "I", "PL", "ISC", "RUF"]
 unfixable = ["B"]
-ignore = ["E501", "RUF001", "B024", "PLR2004"]
+ignore = ["E501", "RUF001", "B024", "PLR2004", "RUF009", "PLR0913"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]

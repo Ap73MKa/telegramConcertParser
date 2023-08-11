@@ -8,7 +8,7 @@ WORKDIR /app
 # Stage 2
 FROM base as builder
 
-COPY ./bot ./bot
+COPY src/bot ./bot
 COPY pyproject.toml pdm.lock ./
 RUN pip install -U pip setuptools wheel
 RUN pip install pdm

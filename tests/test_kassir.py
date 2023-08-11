@@ -1,9 +1,8 @@
 from datetime import date
 
 import pytest
+from bot.parser import KassirParser
 from bs4 import BeautifulSoup
-
-from bot.parsing.kassir import KassirParser
 
 
 @pytest.fixture

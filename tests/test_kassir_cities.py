@@ -1,6 +1,5 @@
 import pytest
-
-from bot.parsing.kassir_cities import KassirCitiesParser
+from bot.parser import KassirCitiesParser
 
 
 @pytest.fixture
