@@ -2,23 +2,21 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 from aiogram import BaseMiddleware
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import TelegramObject
 
-from src.bot.data_structure import TransferData
 from src.database.models import User
 
 
 class RegisterMiddleware(BaseMiddleware):
     async def __call__(
         self,
-        handler: Callable[[Message | CallbackQuery, dict[str, Any]], Awaitable[Any]],
-        event: Message | CallbackQuery,
-        data: TransferData,
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: dict[str, Any],
     ) -> Any:
         db = data["db"]
-        user = await db.user.get_by_where(User.user_id == event.from_user.id)
-        if not user:
-            await db.user.new(
-                user_id=event.from_user.id, user_name=event.from_user.full_name
-            )
+        user_id = event.from_user.id  # type: ignore
+        full_name = event.from_user.full_name  # type: ignore
+        if not (await db.user.get_by_where(User.user_id == user_id)):
+            await db.user.new(user_id=user_id, user_name=full_name)
         return await handler(event, data)

@@ -10,7 +10,7 @@ class DatabaseConfig:
     user: str = environ.get("POSTGRES_USER", "")
     password: str = environ.get("POSTGRES_PASSWORD", "")
     host: str = environ.get("POSTGRES_HOST", "")
-    port: int = environ.get("POSTGRES_PORT", "5432")
+    port: int = int(environ.get("POSTGRES_PORT", "5432"))
 
     database_system: str = "postgresql"
     driver: str = "asyncpg"
@@ -29,7 +29,7 @@ class DatabaseConfig:
 @dataclass
 class BotConfig:
     token: str = environ.get("TOKEN", "define me")
-    admin_id: int = environ.get("ADMIN_ID", "0")
+    admin_id: int = int(environ.get("ADMIN_ID", "0"))
     kassir_link: str = "kassir.ru"
 
 

@@ -1,18 +1,19 @@
 from time import perf_counter
 
 from aiogram import F, Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
-from database.database import Database
+from aiogram.types import CallbackQuery, Message
+from bot.handlers.common import get_answer_for_concert_keyboard
+from bot.handlers.messages import Messages
+from bot.handlers.states import MenuStates
+from bot.keyboards import get_main_keyboard
+from bot.middlewares import AdminFilter
 
-from src.bot.handlers.messages import Messages
-from src.bot.handlers.states import MenuStates
-from src.bot.keyboards import get_main_keyboard
-from src.bot.middlewares import AdminFilter
+from src.database import City, Database
 
 # from src.bot.parser import create_concerts
-from src.database.models import Concert
 
 main_router = Router()
 common_router = Router()
@@ -20,7 +21,8 @@ common_router = Router()
 
 @main_router.message(CommandStart())
 async def start_main_menu(message: Message, state: FSMContext, db: Database):
-    user = await db.user.get(message.from_user.id)
+    user_id = message.from_user.id  # type: ignore
+    user = await db.user.get(user_id)
     user_cities = await db.user_city.get_cities_of_user(user.user_id)
     last_city = user_cities[0] if len(user_cities) >= 1 else None
     await message.answer(
@@ -47,14 +49,12 @@ async def handle_about_message(message: Message) -> None:
 
 @main_router.message(MenuStates.main_menu, F.text.contains("Повторить запрос"))
 async def handle_repeat_message(message: Message, db: Database) -> None:
-    user = await db.user.get(message.from_user.id)
+    user_id = message.from_user.id  # type: ignore
+    user = await db.user.get(user_id)
     user_cities = await db.user_city.get_cities_of_user(user.user_id)
     last_city = user_cities[0] if len(user_cities) >= 1 else None
-    concerts = await db.concert.get_many(
-        Concert.city_id == last_city.id,
-        limit=20,
-        order_by=Concert.concert_date)
-    await message.answer(Messages.get_concert_list(concerts, last_city))
+    text, keyboard = await get_answer_for_concert_keyboard(1, last_city, db)
+    await message.answer(text, reply_markup=keyboard, disable_web_page_preview=True)
 
 
 @main_router.message(F.text.contains("Домой"))
@@ -63,6 +63,26 @@ async def switch_to_main_menu_if_home(
 ):
     await state.set_state(MenuStates.main_menu)
     await start_main_menu(message, state, db)
+
+
+@main_router.callback_query(F.data.startswith("navcity-"))
+async def handle_concert_navigation_callback(query: CallbackQuery, db: Database):
+    data = query.data.split("-")  # type: ignore
+
+    if len(data) < 3:
+        return None
+    city_abb = data[1]
+    if not (city := await db.city.get_by_where(City.abb == city_abb)):
+        return None
+    page_numb = int(data[2])
+
+    text, keyboard = await get_answer_for_concert_keyboard(page_numb, city, db)
+    try:
+        await query.message.edit_text(
+            text, reply_markup=keyboard, disable_web_page_preview=True
+        )
+    except TelegramBadRequest:
+        return None
 
 
 @common_router.message(F.text)

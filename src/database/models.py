@@ -3,14 +3,15 @@ from datetime import date, datetime
 from sqlalchemy import DATE, TIMESTAMP, VARCHAR, ForeignKey, Integer, func
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.orm import (
-    DeclarativeMeta,
+    DeclarativeBase,
     Mapped,
-    declarative_base,
     mapped_column,
     relationship,
 )
 
-BaseModel: DeclarativeMeta = declarative_base()
+
+class BaseModel(DeclarativeBase):
+    pass
 
 
 async def process_scheme(engine: AsyncEngine):
@@ -31,7 +32,7 @@ class User(BaseModel):
     cities: Mapped[list["UserCity"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:
-        return f"User(id={self.user_id} name: {self.full_name})"
+        return f"User(id={self.user_id} name={self.full_name})"
 
 
 class City(BaseModel):
@@ -72,7 +73,7 @@ class Concert(BaseModel):
     add_time: Mapped[date] = mapped_column(DATE, default=date.today())
 
     def __repr__(self) -> str:
-        return f"Concert(id={self.id} name:{self.name})"
+        return f"Concert(id={self.id} city_id={self.city_id} name={self.name})"
 
 
 class UserCity(BaseModel):

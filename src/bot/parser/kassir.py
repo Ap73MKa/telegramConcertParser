@@ -13,7 +13,7 @@ from .utils import get_netloc_from_url
 
 
 class KassirParser(GroupParser):
-    _PARAMS: ClassVar[dict[str, str | int]] = {"sort": 0, "c": 60}
+    _PARAMS: ClassVar[dict[str, str | int]] = {"sort": 1}
 
     def __init__(self, urls: Sequence[str]):
         self._URLS = urls
@@ -36,7 +36,7 @@ class KassirParser(GroupParser):
             "radio",
             "фестиваля",
             "курс",
-            "онлайн"
+            "онлайн",
         ]
 
     # region Private Methods

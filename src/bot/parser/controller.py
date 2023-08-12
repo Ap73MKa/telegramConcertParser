@@ -13,13 +13,16 @@ async def parse_concerts(db: Database) -> None:
     data = await parser.get_data_from_all_urls()
     city_abb_to_id = {city.abb: city.id for city in cities}
 
-    filtered_data = [{
-        'name': item['name'],
-        'concert_date': item['date'],
-        'price': item['price'],
-        'link': item['link'],
-        'city_id': city_abb_to_id[item['city_abb']]
-    } for item in data]
+    filtered_data = [
+        {
+            "name": item["name"],
+            "concert_date": item["date"],
+            "price": item["price"],
+            "link": item["link"],
+            "city_id": city_abb_to_id[item["city_abb"]],
+        }
+        for item in data
+    ]
 
     if not data:
         logger.warning("Parsing concerts - no concerts found")

@@ -7,6 +7,17 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from src.database.models import City
 
 CITIES_PER_PAGE = 9
+HOME_KEYBOARD = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Просмотреть список 🔥")],
+        [KeyboardButton(text="Домой 🏚")],
+    ],
+    resize_keyboard=True,
+)
+
+
+def get_home_keyboard() -> ReplyKeyboardMarkup:
+    return HOME_KEYBOARD
 
 
 def get_main_keyboard(last_city: City | None = None) -> ReplyKeyboardMarkup:
@@ -17,13 +28,6 @@ def get_main_keyboard(last_city: City | None = None) -> ReplyKeyboardMarkup:
     builder.row(KeyboardButton(text="Поиск концертов по городам 💥"))
     builder.row(KeyboardButton(text="O телеграм боте 💬"))
     return builder.as_markup()
-
-
-def get_home_keyboard() -> ReplyKeyboardMarkup:
-    builder = ReplyKeyboardBuilder()
-    builder.row(KeyboardButton(text="Просмотреть список 🔥"))
-    builder.row(KeyboardButton(text="Домой 🏚"))
-    return builder.as_markup(resize_keyboard=True)
 
 
 def get_city_keyboard(cities: Sequence[City], current_page: int) -> ReplyKeyboardMarkup:

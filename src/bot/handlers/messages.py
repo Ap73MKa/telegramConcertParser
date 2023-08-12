@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from random import choices
 
 from src.config import configure
-from src.database.models import City, Concert
+from src.database import City, Concert
 
 
 class Messages(ABC):
@@ -34,7 +34,7 @@ class Messages(ABC):
         return "Введите <b>название города</b> или выберите город из истории поиска:"
 
     @staticmethod
-    def get_concert_list(concerts: Sequence[Concert], city: City) -> str:
+    def get_concert_list(current_page: int, max_page: int, concerts: Sequence[Concert], city: City) -> str:
         concert_list = concerts[len(concerts) - 20 :]
         max_city_letter_count = 40
         for concert in concert_list:
@@ -51,8 +51,8 @@ class Messages(ABC):
         concert_list = "\n".join(concert_list)
         city_name = str(city.name).upper()
         return (
-            f'<a href="https://{city.abb}.{configure.bot.kassir_link}">{city_name}</a>. '
-            f"Список концертов\n\n\n{concert_list}"
+            f'<a href="https://{city.abb}.{configure.bot.kassir_link}">{city_name}</a>. Список концертов\n\n'
+            f'{"-" * 10} Страница[{current_page}/{max_page}] {"-" * 10}\n\n\n{concert_list}'
         )
 
     @staticmethod

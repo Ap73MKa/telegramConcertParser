@@ -13,7 +13,9 @@ class UserCityRepository(Repository[UserCity]):
 
     async def new(self, user_id: int, city_id: int) -> UserCity:
         # Check if the user already has a record with the given city
-        existing_record = await self.get_by_where(and_(UserCity.user_id == user_id, UserCity.city_id == city_id))
+        existing_record = await self.get_by_where(
+            and_(UserCity.user_id == user_id, UserCity.city_id == city_id)
+        )
         if existing_record:
             await self.delete(UserCity.id == existing_record.id)
 

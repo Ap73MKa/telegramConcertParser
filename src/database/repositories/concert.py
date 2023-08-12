@@ -25,7 +25,7 @@ class ConcertRepository(Repository[Concert]):
                 link=link,
                 price=price,
                 concert_date=concert_date,
-                city_id=city_id
+                city_id=city_id,
             )
         )
         return new_user

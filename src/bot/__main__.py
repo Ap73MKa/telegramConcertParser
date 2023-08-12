@@ -9,8 +9,12 @@ from loguru import logger
 from src.bot.data_structure import TransferData
 from src.bot.handlers import bot_commands, register_handlers
 from src.config import configure
-from src.database.database import Database, create_async_engine, create_session_maker
-from src.database.models import process_scheme
+from src.database import (
+    Database,
+    create_async_engine,
+    create_session_maker,
+    process_scheme,
+)
 
 
 async def main() -> None:
@@ -51,7 +55,7 @@ async def main() -> None:
     await dp.start_polling(
         bot,
         allowed_updates=dp.resolve_used_update_types(),
-        **TransferData(pool=session_maker),
+        **TransferData(pool=session_maker),  # type: ignore
     )
 
 

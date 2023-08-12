@@ -15,3 +15,21 @@ def get_inline_city_keyboard(cities: Sequence[City]) -> InlineKeyboardMarkup:
     builder.add(*buttons)
     builder.adjust(1, repeat=True)
     return builder.as_markup()
+
+
+def get_nav_city_inline_keyboard(
+    city_abb: str, current_page: int
+) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    buttons = [
+        InlineKeyboardButton(
+            text="Предыдущая страница",
+            callback_data=f"navcity-{city_abb}-{current_page - 1}",
+        ),
+        InlineKeyboardButton(
+            text="Следующая страница",
+            callback_data=f"navcity-{city_abb}-{current_page + 1}",
+        ),
+    ]
+    builder.add(*buttons)
+    return builder.as_markup()
