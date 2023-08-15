@@ -50,7 +50,7 @@ async def handle_empty_sticker(message: Message, state: FSMContext, db: Database
 
 @city_router.message(MenuStates.city_menu, F.text)
 async def handle_city_request_message(message: Message, db: Database):
-    if not (city := await db.city.fuzzy_get_by_name(message.text)):
+    if not (city := await db.city.fuzzy_get_by_name(message.text)): # type: ignore
         return None
     user_id = message.from_user.id  # type: ignore
     user = await db.user.get(user_id)

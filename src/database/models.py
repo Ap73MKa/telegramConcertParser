@@ -61,7 +61,7 @@ class Concert(BaseModel):
         Integer, unique=True, nullable=False, primary_key=True
     )
     name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
-    link: Mapped[str] = mapped_column(VARCHAR(256), nullable=False)
+    link: Mapped[str] = mapped_column(VARCHAR(256), nullable=False, unique=True)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     concert_date: Mapped[date] = mapped_column(DATE, nullable=False)
 

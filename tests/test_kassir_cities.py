@@ -1,10 +1,10 @@
 import pytest
-from bot.parser import KassirCitiesParser
+from bot.parser.kassir_cities import KassirCitiesGroupParser
 
 
 @pytest.fixture
 def parser():
-    return KassirCitiesParser()
+    return KassirCitiesGroupParser()
 
 
 @pytest.mark.parametrize(

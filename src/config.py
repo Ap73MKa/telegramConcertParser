@@ -30,7 +30,8 @@ class DatabaseConfig:
 class BotConfig:
     token: str = environ.get("TOKEN", "define me")
     admin_id: int = int(environ.get("ADMIN_ID", "0"))
-    kassir_link: str = "kassir.ru"
+    kassir_site: str = "kassir.ru"
+    kassir_api: str = "https://api.kassir.ru/api/search"
 
 
 @dataclass

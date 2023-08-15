@@ -29,7 +29,9 @@ class Repository(Generic[AbstractModel], ABC):
         self, where_clause=None, limit: int | None = None, order_by=None
     ) -> Sequence[AbstractModel]:
         statement = select(self.type_model)
-        statement = statement.where(where_clause) if where_clause is not None else statement
+        statement = (
+            statement.where(where_clause) if where_clause is not None else statement
+        )
         statement = statement.limit(limit).order_by(order_by)
         result = await self.session.scalars(statement)
         return result.all()

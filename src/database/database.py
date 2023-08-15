@@ -13,7 +13,7 @@ from .repositories import (
 
 def create_async_engine(url: URL | str) -> AsyncEngine:
     return _create_async_engine(
-        url=url, echo=True, pool_pre_ping=True, poolclass=NullPool
+        url=url, echo=False, pool_pre_ping=True, poolclass=NullPool
     )
 
 

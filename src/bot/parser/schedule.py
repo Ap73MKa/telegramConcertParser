@@ -1,21 +1,24 @@
 import asyncio
-import datetime
 
 import aiojobs
+from bot.parser.controller import parse_api
 from database.database import Database
-from database.models import Concert
 from loguru import logger
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 
-async def check_concerts(db: Database) -> None:
-    logger.info("Schedule check concerts")
-    time_interval = 8 * 60 * 60
+async def check_concerts(session_maker: async_sessionmaker) -> None:
+    time_interval = 12 * 60 * 60
     while True:
-        # await parse_concerts(db)
-        await db.concert.delete(Concert.concert_date < datetime.date.today())
+        logger.info("Scheduler checks new concerts")
+        async with session_maker() as session:
+            db = Database(session)
+            await parse_api(db)
+            await db.concert.delete_outdated()
+            await session.commit()
         await asyncio.sleep(time_interval)
 
 
-async def start_parser_schedule(db: Database) -> None:
+async def start_parser_schedule(session_maker: async_sessionmaker) -> None:
     scheduler = aiojobs.Scheduler()
-    await scheduler.spawn(check_concerts(db))
+    await scheduler.spawn(check_concerts(session_maker))

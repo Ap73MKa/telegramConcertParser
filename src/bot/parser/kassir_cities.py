@@ -5,12 +5,12 @@ from bs4 import BeautifulSoup, Tag
 
 from src.config import configure
 
-from .parser import GroupParser
+from .htmlparser import HTMLGroupParser
 from .utils import get_netloc_from_url, simplify_string
 
 
-class KassirCitiesParser(GroupParser):
-    _URLS: ClassVar[list[str]] = [f"https://{configure.bot.kassir_link}"]
+class KassirCitiesGroupParser(HTMLGroupParser):
+    _URLS: ClassVar[list[str]] = [f"https://{configure.bot.kassir_site}"]
 
     def _is_valid_data(self, data: dict) -> bool:
         if not all(data[key] for key in data.keys()):

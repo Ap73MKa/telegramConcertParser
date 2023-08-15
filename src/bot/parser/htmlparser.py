@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 
 
-class Parser(ABC):
+class HTMLParser(ABC):
     _URLS: ClassVar[Sequence[str]] = []
     _PARAMS: ClassVar[dict[str, str | int]] = {}
     _HEADER: ClassVar[dict[str, str]] = {
@@ -46,7 +46,7 @@ class Parser(ABC):
     # endregion
 
 
-class GroupParser(Parser, ABC):
+class HTMLGroupParser(HTMLParser, ABC):
     # region Private Methods
     def __filter_data(self, data: BeautifulSoup) -> dict | None:
         try:
