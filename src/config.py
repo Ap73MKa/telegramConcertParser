@@ -1,16 +1,19 @@
 from dataclasses import dataclass
-from os import environ
+from os import getenv
 
+from dotenv import load_dotenv
 from sqlalchemy import URL
+
+load_dotenv()
 
 
 @dataclass
 class DatabaseConfig:
-    name: str = environ.get("POSTGRES_DB", "")
-    user: str = environ.get("POSTGRES_USER", "")
-    password: str = environ.get("POSTGRES_PASSWORD", "")
-    host: str = environ.get("POSTGRES_HOST", "")
-    port: int = int(environ.get("POSTGRES_PORT", "5432"))
+    database: str | None = getenv("POSTGRES_DB")
+    user: str | None = getenv("POSTGRES_USER")
+    password: str | None = getenv("POSTGRES_PASSWORD")
+    host: str = getenv("POSTGRES_HOST", "localhost")
+    port: int = int(getenv('POSTGRES_PORT', "5432"))
 
     database_system: str = "postgresql"
     driver: str = "asyncpg"
@@ -19,7 +22,7 @@ class DatabaseConfig:
         return URL.create(
             drivername=f"{self.database_system}+{self.driver}",
             username=self.user,
-            database=self.name,
+            database=self.database,
             password=self.password,
             port=self.port,
             host=self.host,
@@ -28,15 +31,15 @@ class DatabaseConfig:
 
 @dataclass
 class BotConfig:
-    token: str = environ.get("TOKEN", "define me")
-    admin_id: int = int(environ.get("ADMIN_ID", "0"))
+    token: str = getenv("BOT_TOKEN", "")
+    admin_id: int = int(getenv("ADMIN_ID", "0"))
     kassir_site: str = "kassir.ru"
     kassir_api: str = "https://api.kassir.ru/api/search"
 
 
 @dataclass
 class Config:
-    debug: bool = bool(environ.get("DEBUG", "").strip())
+    debug: bool = bool(getenv("DEBUG", "").strip())
     db = DatabaseConfig()
     bot = BotConfig()
 

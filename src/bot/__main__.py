@@ -36,7 +36,7 @@ async def set_up_parser(session_maker: async_sessionmaker) -> None:
     await start_parser_schedule(session_maker)
 
 
-async def main() -> None:
+async def run_bot() -> None:
     if configure.debug:
         set_up_configs()
     set_localization()
@@ -64,6 +64,6 @@ async def main() -> None:
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        asyncio.run(run_bot())
     except (KeyboardInterrupt, SystemExit):
         logger.info("Bot stopped")

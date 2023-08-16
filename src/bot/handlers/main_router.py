@@ -10,6 +10,7 @@ from bot.handlers.messages import Messages
 from bot.handlers.states import MenuStates
 from bot.keyboards import get_main_keyboard
 from bot.middlewares import AdminFilter
+from bot.parser.controller import parse_api
 
 from src.database import City, Database
 
@@ -36,9 +37,9 @@ async def start_main_menu(message: Message, state: FSMContext, db: Database):
 async def handle_update_command(message: Message, db: Database) -> None:
     start_time = perf_counter()
     await db.concert.delete_outdated()
-    # await create_concerts()
+    await parse_api(db)
     end_time = perf_counter()
-    elapsed_time = start_time - end_time
+    elapsed_time = end_time - start_time
     await message.answer(Messages.get_update_time(elapsed_time))
 
 

@@ -3,7 +3,7 @@ name = "telegramConcertParser"
 version = "1.2.0"
 description = "A Telegram bot powered by aiogram that parses information about concerts"
 authors = [
-    {name = "Ap73MKa",email = "artyom.vlasov.05@mail.ru"},
+    {name = "Ap73MKa",email = "artyom.vlasov.03@mail.ru"},
 ]
 dependencies = [
     "aiogram>=3.0.0b8",
@@ -16,6 +16,7 @@ dependencies = [
     "aiojobs>=1.1.0",
     "sqlalchemy>=2.0.19",
     "asyncpg>=0.28.0",
+    "python-dotenv>=1.0.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
