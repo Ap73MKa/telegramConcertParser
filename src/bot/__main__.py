@@ -4,9 +4,9 @@ import locale
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
-from bot.parser.controller import parse_city_list
-from bot.parser.schedule import start_parser_schedule
 from loguru import logger
+from parser.controller import parse_city_list
+from parser.schedule import start_parser_schedule
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from src.bot.data_structure import TransferData

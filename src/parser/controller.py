@@ -1,7 +1,7 @@
-from bot.parser.kassir_api import KassirApi
-from bot.parser.kassir_cities import KassirCitiesGroupParser
 from database.database import Database
 from loguru import logger
+from parser.kassir_api import KassirApi
+from parser.kassir_cities import KassirCitiesGroupParser
 
 from src.config import configure
 

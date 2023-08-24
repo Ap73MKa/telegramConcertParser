@@ -1,9 +1,9 @@
 import asyncio
 
 import aiojobs
-from bot.parser.controller import parse_api
 from database.database import Database
 from loguru import logger
+from parser.controller import parse_api
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 

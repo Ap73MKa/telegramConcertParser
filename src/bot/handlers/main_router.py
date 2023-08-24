@@ -10,7 +10,7 @@ from bot.handlers.messages import Messages
 from bot.handlers.states import MenuStates
 from bot.keyboards import get_main_keyboard
 from bot.middlewares import AdminFilter
-from bot.parser.controller import parse_api
+from parser.controller import parse_api
 
 from src.database import City, Database
 

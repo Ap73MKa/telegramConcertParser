@@ -1,5 +1,5 @@
 import pytest
-from bot.parser.kassir_cities import KassirCitiesGroupParser
+from parser.kassir_cities import KassirCitiesGroupParser
 
 
 @pytest.fixture
