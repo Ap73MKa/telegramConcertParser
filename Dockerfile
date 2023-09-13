@@ -1,4 +1,3 @@
-# Stage 1
 FROM python:3.11-alpine as builder
 
 RUN pip install -U pip setuptools wheel

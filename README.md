@@ -15,41 +15,27 @@ This is a Telegram Bot written in Python for monitoring concerts. Based on [aiog
 - Search for concerts by entering the name of the city
 - Search for concerts by city selection via the keyboard
 - Repeating the previous request
-- Updating the database every 8 hours
+- Updating the database every 12 hours
 - Parsing information from [kassir.ru](https://kassir.ru/)
 
 ## Usage
 
-### 1. Install Requirements
+- Install [Docker](https://www.docker.com/)
 
-- Install [Python 3.10+](https://www.python.org/downloads/)
-
-- Clone this repository<br>
+- Clone this repository
 
 ```bash
 git clone https://github.com/Ap73MKa/telegramConcertParser
 ```
 
-- Install PDM via pip
+- Do a copy of .env.dist and named it .env. Fill environment variables using this [guide](assets/env.md).
 
 ```bash
-pip install pdm
-```
-
-- Setup project
-
-```bash
-pdm sync
+cp .env.dist .env
 ```
 
 - Run bot
 
 ```bash
-python -m bot
+docker compose up
 ```
-
-### 2. Setup environment variables
-
-- `TOKEN`: The Telegram Bot Token that you got from [@BotFather](https://t.me/BotFather)
-- `ADMIN_ID`: The Telegram User ID (not username) of the Owner of the bot
-- `DEBUG`: Insert any symbols to enable debug mode
