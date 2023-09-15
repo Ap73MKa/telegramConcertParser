@@ -19,6 +19,6 @@ def set_up_configs() -> None:
         compression="zip",
         retention="3 days",
     )
-    sqlalchemy_logger = logging.getLogger('sqlalchemy.engine')
+    sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
     sqlalchemy_logger.addHandler(PropagateHandler())
     sqlalchemy_logger.setLevel(logging.DEBUG)

@@ -13,7 +13,9 @@ async def get_answer_for_concert_keyboard(
     current_page: int, city: City, db: Database
 ) -> tuple[str, InlineKeyboardMarkup]:
     concerts = await db.concert.get_many(
-        Concert.city_id == city.id, order_by=Concert.concert_date, limit=10 * MAX_CONCERTS_PER_PAGE
+        Concert.city_id == city.id,
+        order_by=Concert.concert_date,
+        limit=10 * MAX_CONCERTS_PER_PAGE,
     )
     max_page = ceil(len(concerts) / MAX_CONCERTS_PER_PAGE)
     page_numb = max(1, min(current_page, max_page))

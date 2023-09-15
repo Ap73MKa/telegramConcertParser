@@ -22,6 +22,10 @@ requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}
 
+[tool.pdm.scripts]
+lint = "ruff src"
+format = "black src"
+
 [tool.ruff]
 select = ["E", "F", "B", "UP", "I", "PL", "ISC", "RUF"]
 unfixable = ["B"]

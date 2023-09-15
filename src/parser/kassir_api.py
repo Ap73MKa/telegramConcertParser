@@ -56,15 +56,14 @@ class KassirApi:
 
     async def get_data_from_api(self) -> Sequence[ResultItem]:
         async with ClientSession(headers=self._HEADER) as session:
-            result = []
-            for sublist in await gather(
+            result = await gather(
                 *[self.fetch(session, domain) for domain in self.domains]
-            ):
-                if sublist is not None:
-                    result.extend([elm for elm in sublist if elm is not None])
-            return result
+            )
+            return [item for sublist in result for item in sublist if item]
 
-    async def fetch(self, session: ClientSession, domain: str) -> Sequence[ResultItem | None]:
+    async def fetch(
+        self, session: ClientSession, domain: str
+    ) -> Sequence[ResultItem | None]:
         params = {**self._PARAMS, "domain": domain}
         abb = domain.split(".")[0]
         try:
@@ -84,7 +83,7 @@ class KassirApi:
     def parse_data(item: ResponseItem, abb: str) -> ResultItem | None:
         try:
             keys = ["beginsAt", "title", "priceRange", "urlSlug"]
-            if any(key not in item for key in keys):
+            if not all(key in item for key in keys):
                 return None
             return ResultItem(
                 name=item["title"].strip(),

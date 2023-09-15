@@ -45,7 +45,7 @@ async def handle_update_command(message: Message, db: Database) -> None:
 
 @main_router.message(MenuStates.main_menu, F.text.contains("O телеграм боте"))
 async def handle_about_message(message: Message) -> None:
-    await message.answer(Messages.get_site_info())
+    await message.answer(Messages.SITE_INFO)
 
 
 @main_router.message(MenuStates.main_menu, F.text.contains("Повторить запрос"))
@@ -91,9 +91,7 @@ async def handle_unmatched_message(message: Message, state: FSMContext, db: Data
     if not await state.get_state():
         await send_welcome_message(message, db)
         return
-    await message.answer(
-        "Извините, но я не понимаю ваше сообщение. Выберите пункт из меню."
-    )
+    await message.answer(Messages.ERR_MAIN_MENU)
 
 
 async def send_welcome_message(message: Message, db: Database):

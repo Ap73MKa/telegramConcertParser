@@ -10,12 +10,14 @@ async def parse_api(db: Database) -> None:
     cities = await db.city.get_many()
     domains = [f"{city.abb}.{configure.bot.kassir_site}" for city in cities]
     city_abb_to_id = {city.abb: city.id for city in cities}
+
     parser = KassirApi(domains)
     data = await parser.get_data_from_api()
 
     if not data:
         logger.warning("Parsing concerts - no concerts found")
         return
+
     dict_data = [
         {
             "name": item.name,
@@ -33,8 +35,10 @@ async def parse_api(db: Database) -> None:
 async def parse_city_list(db: Database) -> None:
     parser = KassirCitiesGroupParser()
     parsed_data = await parser.get_data_from_all_urls()
+
     if not parsed_data:
         logger.warning("Parsing city list - no cities found")
         return
+
     await db.city.insert(parsed_data)
     logger.info("Parsing city list - completed")

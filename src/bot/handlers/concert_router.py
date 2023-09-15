@@ -20,7 +20,8 @@ async def start_concert_menu(message: Message, state: FSMContext, db: Database) 
     cities = await db.user_city.get_cities_of_user(user.user_id)
     await message.answer(text="Ваш список запросов:", reply_markup=get_home_keyboard())
     await message.answer(
-        text=Messages.get_before_list(), reply_markup=get_inline_city_keyboard(cities)
+        text=Messages.PREFACE_CONCERT_LIST,
+        reply_markup=get_inline_city_keyboard(cities),
     )
     await state.set_state(MenuStates.concert_menu)
 
@@ -31,7 +32,8 @@ async def handle_recheck_list(message: Message, db: Database):
     user = await db.user.get(user_id)
     cities = await db.user_city.get_cities_of_user(user.user_id)
     await message.answer(
-        text=Messages.get_before_list(), reply_markup=get_inline_city_keyboard(cities)
+        text=Messages.PREFACE_CONCERT_LIST,
+        reply_markup=get_inline_city_keyboard(cities),
     )
 
 

@@ -13,7 +13,7 @@ class DatabaseConfig:
     user: str | None = getenv("POSTGRES_USER")
     password: str | None = getenv("POSTGRES_PASSWORD")
     host: str = getenv("POSTGRES_HOST", "localhost")
-    port: int = int(getenv('POSTGRES_PORT', "5432"))
+    port: int = int(getenv("POSTGRES_PORT", "5432"))
 
     database_system: str = "postgresql"
     driver: str = "asyncpg"
